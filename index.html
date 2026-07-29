@@ -3,466 +3,452 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Window Watcher | Settings</title>
+<title>Window Watcher</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 :root{
   --accent:#a855f7;
   --font-display:"Bricolage Grotesque",system-ui,sans-serif;
   --font-body:"Instrument Sans",system-ui,sans-serif;
   --font-mono:"Space Mono",ui-monospace,monospace;
-  --r-sm:8px; --r-md:12px; --r-lg:18px;
+  --r-sm:8px; --r-md:11px; --r-lg:15px;
   --ease:cubic-bezier(.22,.61,.36,1);
-  --ok:#4ade80; --warn:#f5b544; --err:#fb6a6a;
+  --ok:#3fd17a; --warn:#f5b544;
 }
-html[data-theme="dark"]{ --bg:#0c0716; --bg-deep:#080411; --surface:#150d28; --raised:#1d1440; --border:#2c2150; --border-soft:#211842; --text:#f2ecff; --muted:#9a8cc0; --faint:#6b5f8e; }
+html[data-theme="dark"]{ --bg:#0c0716; --bg-deep:#080411; --surface:#150d28; --raised:#1d1440; --border:#2c2150; --border-soft:#221944; --text:#f2ecff; --muted:#9a8cc0; --faint:#6b5f8e; }
 html[data-theme="light"]{ --bg:#f4f1fb; --bg-deep:#ebe6f7; --surface:#fff; --raised:#faf8ff; --border:#ddd5f0; --border-soft:#e8e2f6; --text:#1c1233; --muted:#5f5480; --faint:#9a90b8; }
 *{ box-sizing:border-box; }
-body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased; transition:background .35s var(--ease),color .35s var(--ease); }
-body::before{ content:""; position:fixed; inset:0; pointer-events:none; z-index:0; background:radial-gradient(55% 40% at 85% -8%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%), radial-gradient(45% 40% at -8% 100%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%); }
-.shell{ position:relative; z-index:1; max-width:1180px; margin:0 auto; padding:0 28px 80px; }
-header{ display:flex; align-items:center; justify-content:space-between; padding:30px 0 22px; border-bottom:1px solid var(--border-soft); margin-bottom:26px; }
-.brand{ display:flex; align-items:baseline; gap:12px; }
-.brand .wordmark{ font-family:var(--font-display); font-weight:800; font-size:26px; letter-spacing:-.02em; line-height:1; }
-.brand .wordmark em{ font-style:normal; color:var(--accent); }
-.brand .tag{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
-.header-right{ display:flex; align-items:center; gap:14px; }
-.status{ display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:12px; color:var(--muted); }
-.status .dot{ width:8px; height:8px; border-radius:50%; background:var(--faint); box-shadow:0 0 0 3px color-mix(in srgb, var(--faint) 25%, transparent); transition:background .2s; }
-.status .dot[data-s="connecting"]{ background:var(--warn); box-shadow:0 0 0 3px color-mix(in srgb,var(--warn) 25%,transparent); }
-.status .dot[data-s="connected"]{ background:var(--ok); box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 25%,transparent); }
-.status .dot[data-s="error"]{ background:var(--err); box-shadow:0 0 0 3px color-mix(in srgb,var(--err) 25%,transparent); }
-.grid{ display:grid; grid-template-columns:1fr 400px; gap:36px; align-items:start; }
-@media (max-width:900px){ .grid{ grid-template-columns:1fr; } .preview-col{ position:static; } }
-.panel{ background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--r-lg); padding:24px; margin-bottom:22px; }
-.panel > h2{ margin:0 0 4px; font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-.01em; }
-.panel > .sub{ margin:0 0 20px; color:var(--muted); font-size:13.5px; }
-.eyebrow{ font-family:var(--font-mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin-bottom:14px; }
-.segment{ display:inline-flex; background:var(--bg-deep); border:1px solid var(--border-soft); border-radius:999px; padding:3px; }
-.segment button{ appearance:none; border:0; background:transparent; color:var(--muted); font-family:var(--font-body); font-size:13px; font-weight:600; padding:7px 18px; border-radius:999px; cursor:pointer; transition:color .2s var(--ease),background .2s var(--ease); }
-.segment button[aria-pressed="true"]{ background:var(--accent); color:#fff; }
-.swatches{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:16px; }
-.swatch{ width:34px; height:34px; border-radius:10px; border:2px solid transparent; cursor:pointer; transition:transform .15s var(--ease); }
+body{ margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased; transition:background .3s var(--ease), color .3s var(--ease); }
+.wrap{ max-width:440px; margin:0 auto; padding:16px 18px 40px; }
+
+/* header */
+header{ display:flex; align-items:center; justify-content:space-between; padding:6px 0 14px; }
+.brand{ font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:-.02em; }
+.brand em{ font-style:normal; color:var(--accent); }
+.hgroup{ display:flex; align-items:center; gap:10px; }
+#statusIcon{ width:14px; height:14px; display:block; }
+.iconbtn{ appearance:none; background:transparent; border:1px solid var(--border); color:var(--muted); width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:15px; line-height:1; display:grid; place-items:center; transition:border-color .2s, color .2s; }
+.iconbtn:hover, .iconbtn[aria-expanded="true"]{ border-color:var(--accent); color:var(--accent); }
+
+/* menu sheet */
+#menu{ margin-bottom:14px; background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--r-lg); overflow:hidden; }
+#menu[hidden]{ display:none; }
+#menu button{ appearance:none; width:100%; text-align:left; background:transparent; border:0; border-top:1px solid var(--border-soft); color:var(--text); font:inherit; font-weight:600; font-size:14px; padding:14px 16px; cursor:pointer; display:flex; align-items:center; justify-content:space-between; transition:background .15s; }
+#menu button:first-child{ border-top:0; }
+#menu button:hover{ background:var(--raised); color:var(--accent); }
+#menu button::after{ content:"›"; color:var(--faint); font-size:16px; }
+
+/* offline notice */
+.notice{ display:none; align-items:center; gap:10px; flex-wrap:wrap; background:color-mix(in srgb, var(--warn) 12%, var(--surface)); border:1px solid color-mix(in srgb, var(--warn) 35%, var(--border)); border-radius:var(--r-md); padding:10px 12px; font-size:13px; margin-bottom:14px; }
+.notice[data-show="1"]{ display:flex; }
+.notice a{ color:var(--accent); }
+.linkbtn{ appearance:none; background:transparent; border:0; color:var(--accent); font:inherit; font-weight:600; cursor:pointer; padding:0; text-decoration:underline; }
+
+/* views */
+.view[hidden]{ display:none; }
+.subhead{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.back{ appearance:none; background:transparent; border:1px solid var(--border); color:var(--muted); border-radius:8px; height:32px; padding:0 12px; cursor:pointer; font:inherit; font-weight:600; font-size:13px; display:inline-flex; align-items:center; gap:6px; transition:.2s; }
+.back:hover{ border-color:var(--accent); color:var(--text); }
+.subhead h1{ margin:0; font-family:var(--font-display); font-weight:700; font-size:18px; letter-spacing:-.01em; }
+
+/* cards */
+.card{ background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--r-lg); padding:16px; margin-bottom:12px; }
+.card h2{ margin:0 0 12px; font-family:var(--font-display); font-weight:600; font-size:14px; display:flex; align-items:center; justify-content:space-between; }
+.card h2 .side{ font-family:var(--font-mono); font-size:10px; color:var(--faint); font-weight:400; letter-spacing:.1em; text-transform:uppercase; }
+
+/* segmented */
+.seg{ display:inline-flex; background:var(--bg-deep); border:1px solid var(--border-soft); border-radius:999px; padding:3px; }
+.seg button{ appearance:none; border:0; background:transparent; color:var(--muted); font:inherit; font-weight:600; font-size:12px; padding:5px 14px; border-radius:999px; cursor:pointer; transition:.2s; }
+.seg button[aria-pressed="true"]{ background:var(--accent); color:#fff; }
+
+.row{ display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.lbl{ font-size:13px; font-weight:500; }
+
+/* accent */
+.swatches{ display:flex; flex-wrap:wrap; gap:8px; margin:10px 0; }
+.swatch{ width:28px; height:28px; border-radius:8px; border:2px solid transparent; cursor:pointer; transition:transform .15s; }
 .swatch:hover{ transform:translateY(-2px); }
-.swatch[aria-pressed="true"]{ border-color:var(--text); box-shadow:0 0 0 3px var(--surface),0 0 14px color-mix(in srgb,var(--swatch) 60%,transparent); }
-.hex-row{ display:flex; align-items:center; gap:10px; }
-.hex-input{ font-family:var(--font-mono); font-size:13px; background:var(--bg-deep); border:1px solid var(--border); color:var(--text); border-radius:var(--r-sm); padding:9px 12px; width:130px; text-transform:uppercase; }
-.hex-input:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
-.hex-swatch{ width:34px; height:34px; border-radius:8px; border:1px solid var(--border); background:var(--accent); }
-.hint{ color:var(--faint); font-size:12.5px; margin:10px 0 0; }
-.site{ display:grid; grid-template-columns:40px 1fr auto auto; align-items:center; gap:14px; padding:14px 4px; border-top:1px solid var(--border-soft); }
-.site:first-of-type{ border-top:0; }
-.site-icon{ width:40px; height:40px; border-radius:11px; display:grid; place-items:center; font-family:var(--font-display); font-weight:700; font-size:18px; color:#fff; background:var(--site-color,var(--accent)); }
-.site[data-enabled="false"] .site-icon{ filter:grayscale(1); opacity:.4; }
-.site-meta .name{ font-weight:600; font-size:15px; }
-.site-meta .detail{ font-family:var(--font-mono); font-size:11.5px; color:var(--muted); margin-top:2px; }
-.mode-badge{ display:inline-block; font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; padding:3px 8px; border-radius:5px; border:1px solid var(--border); color:var(--muted); margin-right:8px; }
-.icon-btn{ appearance:none; background:transparent; border:1px solid var(--border); color:var(--muted); width:30px; height:30px; border-radius:8px; cursor:pointer; font-size:15px; line-height:1; transition:border-color .2s var(--ease),color .2s var(--ease); }
-.icon-btn:hover{ border-color:#ff8080; color:#ff9d9d; }
-.toggle{ appearance:none; width:44px; height:26px; background:var(--border); border-radius:999px; position:relative; cursor:pointer; transition:background .2s var(--ease); flex-shrink:0; }
-.toggle::after{ content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:transform .2s var(--ease); }
-.toggle:checked{ background:var(--accent); }
-.toggle:checked::after{ transform:translateX(18px); }
-.toggle:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
-.addsite{ margin-top:18px; padding-top:18px; border-top:1px dashed var(--border); display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-.addsite .full{ grid-column:1 / -1; }
-.addsite label,.field > label,.conn label{ display:block; font-size:12px; font-weight:600; margin-bottom:5px; color:var(--muted); }
-.inp{ width:100%; font-family:var(--font-body); font-size:14px; background:var(--bg-deep); color:var(--text); border:1px solid var(--border); border-radius:var(--r-sm); padding:9px 11px; }
-.inp.mono{ font-family:var(--font-mono); font-size:13px; }
+.swatch[aria-pressed="true"]{ border-color:var(--text); box-shadow:0 0 0 3px var(--surface), 0 0 10px color-mix(in srgb, var(--swatch) 55%, transparent); }
+.hexrow{ display:flex; align-items:center; gap:8px; }
+.hexdot{ width:28px; height:28px; border-radius:7px; border:1px solid var(--border); background:var(--accent); }
+.inp{ font-family:var(--font-body); font-size:13px; background:var(--bg-deep); color:var(--text); border:1px solid var(--border); border-radius:var(--r-sm); padding:8px 10px; width:100%; }
+.inp.mono{ font-family:var(--font-mono); }
 .inp:focus-visible{ outline:2px solid var(--accent); outline-offset:1px; }
-.field{ margin-bottom:18px; }
-.field > label{ font-size:13px; margin-bottom:8px; color:var(--text); }
-.field .val{ font-family:var(--font-mono); color:var(--accent); font-size:12px; }
+.hexrow .inp{ width:110px; text-transform:uppercase; }
+
+/* sites */
+.site{ display:grid; grid-template-columns:32px 1fr auto auto; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--border-soft); }
+.site:first-child{ border-top:0; }
+.site .si{ width:32px; height:32px; border-radius:8px; display:grid; place-items:center; color:#fff; font-family:var(--font-display); font-weight:700; font-size:14px; background:var(--sc,var(--accent)); }
+.site[data-on="false"] .si{ filter:grayscale(1); opacity:.4; }
+.site .nm{ font-weight:600; font-size:13.5px; }
+.site .dt{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); margin-top:1px; }
+.x{ appearance:none; background:transparent; border:1px solid var(--border); color:var(--muted); width:26px; height:26px; border-radius:7px; cursor:pointer; font-size:14px; line-height:1; }
+.x:hover{ border-color:#ff8080; color:#ff9d9d; }
+.toggle{ appearance:none; width:40px; height:23px; background:var(--border); border-radius:999px; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
+.toggle::after{ content:""; position:absolute; top:3px; left:3px; width:17px; height:17px; border-radius:50%; background:#fff; transition:transform .2s; }
+.toggle:checked{ background:var(--accent); }
+.toggle:checked::after{ transform:translateX(17px); }
+
+/* collapsibles */
+.disclosure{ margin-top:12px; }
+.disclosure > summary{ list-style:none; cursor:pointer; font-size:12.5px; font-weight:600; color:var(--accent); display:inline-flex; align-items:center; gap:6px; }
+.disclosure > summary::-webkit-details-marker{ display:none; }
+.disclosure > summary::before{ content:"+"; font-family:var(--font-mono); }
+.disclosure[open] > summary::before{ content:"–"; }
+.addgrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+.addgrid .full{ grid-column:1 / -1; }
+.addgrid label, .field label{ display:block; font-size:11.5px; font-weight:600; color:var(--muted); margin-bottom:4px; }
+select.inp{ width:100%; }
+
+/* fields */
+.field{ margin-top:12px; }
+.field:first-child{ margin-top:0; }
+.field .val{ font-family:var(--font-mono); color:var(--accent); font-size:11.5px; float:right; }
 input[type="range"]{ width:100%; accent-color:var(--accent); }
-.two{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-.conn{ display:grid; grid-template-columns:1fr 90px; gap:12px; align-items:end; }
-.conn .full{ grid-column:1 / -1; }
-.preview-col{ position:sticky; top:24px; }
-.stage{ background:var(--bg-deep); border:1px solid var(--border-soft); border-radius:var(--r-lg); position:relative; height:250px; overflow:hidden; }
-.stage .checker{ position:absolute; inset:0; opacity:.26; background-image:linear-gradient(45deg,var(--border-soft) 25%,transparent 25%),linear-gradient(-45deg,var(--border-soft) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--border-soft) 75%),linear-gradient(-45deg,transparent 75%,var(--border-soft) 75%); background-size:22px 22px; background-position:0 0,0 11px,11px -11px,-11px 0; }
-.widget{ position:absolute; display:inline-flex; align-items:center; gap:11px; max-width:calc(100% - 32px); padding:10px 15px 10px 11px; border-radius:12px; background:color-mix(in srgb,var(--bg) 82%,transparent); border:1px solid color-mix(in srgb,var(--accent) 40%,var(--border)); backdrop-filter:blur(7px); box-shadow:0 6px 20px color-mix(in srgb,var(--accent) 22%,transparent); opacity:0; white-space:nowrap; }
-.widget[data-corner="bl"]{ left:16px; bottom:16px; }
-.widget[data-corner="br"]{ right:16px; bottom:16px; }
-.widget[data-corner="tl"]{ left:16px; top:16px; }
-.widget[data-corner="tr"]{ right:16px; top:16px; }
-.widget .w-icon{ width:34px; height:34px; border-radius:9px; display:grid; place-items:center; font-family:var(--font-display); font-weight:700; font-size:15px; color:#fff; background:var(--w-color,var(--accent)); flex-shrink:0; }
-.widget .w-text{ display:flex; flex-direction:column; line-height:1.25; min-width:0; }
-.widget .w-primary{ font-weight:600; font-size:14px; overflow:hidden; text-overflow:ellipsis; }
-.widget .w-secondary{ font-family:var(--font-mono); font-size:11px; color:var(--muted); }
-.stage-foot{ position:absolute; bottom:12px; left:16px; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); pointer-events:none; }
-.widget[data-corner="bl"] ~ .stage-foot,.widget[data-corner="tl"] ~ .stage-foot{ left:auto; right:16px; }
-.preview-actions{ display:flex; gap:10px; margin-top:16px; }
-.btn{ appearance:none; font-family:var(--font-body); font-weight:600; font-size:14px; border-radius:var(--r-sm); padding:11px 16px; cursor:pointer; border:1px solid var(--border); background:var(--raised); color:var(--text); transition:transform .12s var(--ease),border-color .2s var(--ease); flex:1; }
+.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+/* preview */
+.stage{ position:relative; height:170px; border-radius:var(--r-md); overflow:hidden; background:var(--bg-deep); border:1px solid var(--border-soft); }
+.stage .checker{ position:absolute; inset:0; opacity:.22; background-image:linear-gradient(45deg,var(--border-soft) 25%,transparent 25%),linear-gradient(-45deg,var(--border-soft) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--border-soft) 75%),linear-gradient(-45deg,transparent 75%,var(--border-soft) 75%); background-size:20px 20px; background-position:0 0,0 10px,10px -10px,-10px 0; }
+.box{ position:absolute; display:inline-flex; align-items:center; gap:9px; max-width:calc(100% - 28px); padding:9px 13px 9px 10px; border-radius:11px; background:color-mix(in srgb, var(--bg) 82%, transparent); border:1px solid color-mix(in srgb, var(--accent) 40%, var(--border)); backdrop-filter:blur(7px); box-shadow:0 5px 16px color-mix(in srgb, var(--accent) 22%, transparent); opacity:0; white-space:nowrap; }
+.box[data-corner="bl"]{ left:14px; bottom:14px; } .box[data-corner="br"]{ right:14px; bottom:14px; }
+.box[data-corner="tl"]{ left:14px; top:14px; } .box[data-corner="tr"]{ right:14px; top:14px; }
+.box .bi{ width:30px; height:30px; border-radius:8px; display:grid; place-items:center; color:#fff; font-family:var(--font-display); font-weight:700; font-size:13px; background:var(--bc,var(--accent)); flex-shrink:0; }
+.box .bp{ font-weight:600; font-size:13px; overflow:hidden; text-overflow:ellipsis; }
+.box .bs{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); }
+
+.btns{ display:flex; gap:8px; margin-top:12px; }
+.btn{ appearance:none; font:inherit; font-weight:600; font-size:13px; border-radius:var(--r-sm); padding:10px 12px; cursor:pointer; border:1px solid var(--border); background:var(--raised); color:var(--text); transition:transform .12s, border-color .2s; flex:1; }
 .btn:hover{ transform:translateY(-1px); border-color:var(--accent); }
 .btn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
-.btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+.btn.ghost{ font-size:12px; padding:7px 10px; }
 .btn[disabled]{ opacity:.4; cursor:not-allowed; transform:none; border-color:var(--border); }
-.simsel{ width:100%; margin-top:14px; }
-.export{ margin-top:22px; background:var(--bg-deep); border:1px solid var(--border-soft); border-radius:var(--r-md); padding:16px; }
-.export .eyebrow{ margin-bottom:10px; }
-.export pre{ margin:0; font-family:var(--font-mono); font-size:11.5px; color:var(--muted); max-height:130px; overflow:auto; white-space:pre-wrap; word-break:break-word; }
-.export .btn{ margin-top:12px; flex:none; width:100%; }
-.toast{ position:fixed; bottom:22px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--raised); border:1px solid var(--accent); color:var(--text); padding:11px 18px; border-radius:999px; font-size:13.5px; font-weight:600; opacity:0; pointer-events:none; transition:opacity .25s var(--ease),transform .25s var(--ease); z-index:10; }
+.subtle{ text-align:center; margin-top:8px; font-size:11px; color:var(--faint); min-height:14px; }
+.statusline{ display:flex; align-items:center; gap:8px; font-size:13px; }
+.statusline b{ font-weight:600; }
+
+.export pre{ margin:8px 0 0; font-family:var(--font-mono); font-size:10.5px; color:var(--muted); max-height:120px; overflow:auto; white-space:pre-wrap; word-break:break-word; background:var(--bg-deep); padding:10px; border-radius:8px; }
+
+.toast{ position:fixed; bottom:18px; left:50%; transform:translateX(-50%) translateY(16px); background:var(--raised); border:1px solid var(--accent); color:var(--text); padding:9px 16px; border-radius:999px; font-size:12.5px; font-weight:600; opacity:0; pointer-events:none; transition:.25s var(--ease); z-index:10; }
 .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 @media (prefers-reduced-motion:reduce){ *{ transition-duration:.01ms !important; } }
 </style>
 </head>
 <body>
-<div class="shell">
+<div class="wrap">
 
   <header>
-    <div class="brand">
-      <span class="wordmark">Window<em>Watcher</em></span>
-      <span class="tag">themadcurve.cc</span>
-    </div>
-    <div class="header-right">
-      <div class="status"><span class="dot" id="dot" data-s="disconnected"></span><span id="statusText">Not connected</span></div>
-      <div class="segment" role="group" aria-label="Theme">
-        <button id="themeDark" aria-pressed="true">Dark</button>
-        <button id="themeLight" aria-pressed="false">Light</button>
-      </div>
+    <div class="brand">Window<em>Watcher</em></div>
+    <div class="hgroup">
+      <img id="statusIcon" src="./disconnected.svg" alt="Disconnected" data-state="disconnected" title="Disconnected" onerror="fallbackIcon(this)">
+      <button class="iconbtn" id="menuBtn" aria-expanded="false" aria-label="Menu">☰</button>
     </div>
   </header>
 
-  <div class="grid">
+  <nav id="menu" hidden>
+    <button data-view="appearance">Appearance</button>
+    <button data-view="behavior">Behavior</button>
+    <button data-view="connection">Connection</button>
+  </nav>
 
-    <div class="controls-col">
+  <div class="notice" id="offline">
+    <span>Not connected to Streamer.bot.</span>
+    <button class="linkbtn" id="retryBtn">Retry</button>
+    <a href="#" id="guideLink" target="_blank" rel="noopener">Setup guide</a>
+  </div>
 
-      <section class="panel">
-        <h2>Streamer.bot</h2>
-        <p class="sub">Connect to the Streamer.bot WebSocket server on this machine. Leave the password blank unless you set one there.</p>
-        <div class="conn">
-          <div>
-            <label for="sbHost">Address</label>
-            <input class="inp mono" id="sbHost" value="127.0.0.1">
-          </div>
-          <div>
-            <label for="sbPort">Port</label>
-            <input class="inp mono" id="sbPort" value="8080">
-          </div>
-          <div class="full">
-            <label for="sbPass">Password (optional)</label>
-            <input class="inp mono" id="sbPass" type="password" placeholder="none">
-          </div>
-          <div class="full">
-            <button class="btn primary" id="connectBtn" style="flex:none; width:100%;">Connect</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="panel">
-        <h2>Appearance</h2>
-        <p class="sub">Accent drives the box glow, its border, and any site icon that doesn't set its own color.</p>
-        <div class="eyebrow">Accent</div>
-        <div class="swatches" id="swatches"></div>
-        <div class="hex-row">
-          <div class="hex-swatch" id="hexSwatch"></div>
-          <input class="hex-input" id="hexInput" value="#A855F7" maxlength="7" aria-label="Custom accent hex">
-          <span class="hint" style="margin:0">Or type any hex</span>
-        </div>
-        <p class="hint">Presets are placeholders — swap in your brand palette in <span style="font-family:var(--font-mono)">ACCENT_PRESETS</span>.</p>
-      </section>
-
-      <section class="panel">
-        <h2>Watched sites</h2>
-        <p class="sub">The box only ever reacts to sites turned on here. YouTube and Spotify are examples — add your own below or remove these.</p>
-        <div id="siteList"></div>
-        <div class="addsite">
+  <!-- HOME: watched sites -->
+  <section class="view" id="view-sites">
+    <section class="card">
+      <h2>Watched sites</h2>
+      <div id="siteList"></div>
+      <details class="disclosure">
+        <summary>Add a site</summary>
+        <div class="addgrid">
           <div class="full"><label for="asName">Name</label><input class="inp" id="asName" placeholder="SoundCloud"></div>
           <div class="full"><label for="asSuffix">Tab title ends with</label><input class="inp mono" id="asSuffix" placeholder=" - SoundCloud"></div>
-          <div><label for="asMode">What to show</label>
-            <select class="inp" id="asMode"><option value="full">Full page title</option><option value="media">Split track • artist</option></select>
-          </div>
-          <div><label for="asColor">Icon color</label><input class="inp" id="asColor" type="color" value="#a855f7" style="height:38px; padding:4px;"></div>
-          <div class="full"><button class="btn primary" id="addSiteBtn" style="flex:none; width:100%;">Add site</button></div>
+          <div><label for="asMode">Show</label><select class="inp" id="asMode"><option value="full">Full title</option><option value="media">Track • artist</option></select></div>
+          <div><label for="asColor">Icon color</label><input class="inp" id="asColor" type="color" value="#a855f7" style="height:36px;padding:3px"></div>
+          <div class="full"><button class="btn primary" id="addBtn" style="flex:none;width:100%">Add site</button></div>
         </div>
-        <p class="hint">Not sure what to put in “ends with”? Hover the browser in your taskbar — that text is the tab title. Copy the part after the page name, like <span style="font-family:var(--font-mono)"> - SoundCloud</span>. “Split track • artist” is tuned for Spotify; most sites want full title.</p>
-      </section>
+      </details>
+    </section>
+    <button class="btn primary" id="reshowBtn" disabled style="width:100%">Reshow now</button>
+    <div class="subtle" id="saveState"></div>
+  </section>
 
-      <section class="panel">
-        <h2>Behavior</h2>
-        <p class="sub">When the box appears, where it sits, and how long it stays.</p>
-        <div class="field"><label>On-screen time <span class="val" id="durVal">30s</span></label><input type="range" id="duration" min="5" max="120" step="1" value="30"></div>
-        <div class="field"><label for="corner">Corner</label>
-          <select class="inp" id="corner"><option value="bl">Bottom left</option><option value="br">Bottom right</option><option value="tl">Top left</option><option value="tr">Top right</option></select>
-        </div>
-        <div class="two">
+  <!-- APPEARANCE -->
+  <section class="view" id="view-appearance" hidden>
+    <div class="subhead"><button class="back" data-back>‹ Back</button><h1>Appearance</h1></div>
+    <section class="card">
+      <div class="row"><span class="lbl">Theme</span>
+        <div class="seg" role="group" aria-label="Theme"><button id="thDark" aria-pressed="true">Dark</button><button id="thLight" aria-pressed="false">Light</button></div>
+      </div>
+      <div class="swatches" id="swatches" style="margin-top:14px"></div>
+      <div class="hexrow"><div class="hexdot" id="hexDot"></div><input class="inp mono" id="hexInput" value="#A855F7" maxlength="7" aria-label="Custom accent"><span class="lbl" style="color:var(--faint);font-size:12px">custom hex</span></div>
+    </section>
+    <div class="previewSlot"></div>
+  </section>
+
+  <!-- BEHAVIOR -->
+  <section class="view" id="view-behavior" hidden>
+    <div class="subhead"><button class="back" data-back>‹ Back</button><h1>Behavior</h1></div>
+    <section class="card">
+      <div class="field"><label for="corner">Corner</label>
+        <select class="inp" id="corner"><option value="bl">Bottom left</option><option value="br">Bottom right</option><option value="tl">Top left</option><option value="tr">Top right</option></select>
+      </div>
+      <div class="field"><label>On-screen time <span class="val" id="durVal">30s</span></label><input type="range" id="duration" min="5" max="120" step="1" value="30"></div>
+      <div class="row" style="margin-top:14px"><span class="lbl">Show artist line</span><input type="checkbox" class="toggle" id="showArtist" checked></div>
+      <details class="disclosure"><summary>Fade timing</summary>
+        <div class="grid2" style="margin-top:12px">
           <div class="field"><label>Fade in <span class="val" id="inVal">800ms</span></label><input type="range" id="fadeIn" min="200" max="2000" step="50" value="800"></div>
           <div class="field"><label>Fade out <span class="val" id="outVal">600ms</span></label><input type="range" id="fadeOut" min="200" max="2000" step="50" value="600"></div>
         </div>
-        <div class="field" style="margin-bottom:0"><label style="display:flex; align-items:center; justify-content:space-between">Show artist line<input type="checkbox" class="toggle" id="showArtist" checked></label></div>
-      </section>
+      </details>
+    </section>
+    <div class="previewSlot"></div>
+  </section>
 
-    </div>
+  <!-- CONNECTION -->
+  <section class="view" id="view-connection" hidden>
+    <div class="subhead"><button class="back" data-back>‹ Back</button><h1>Connection</h1></div>
+    <section class="card">
+      <div class="statusline"><img id="statusIcon2" width="12" height="12" alt=""><b id="connText">Disconnected</b><button class="linkbtn" id="retryBtn2" style="margin-left:auto">Reconnect</button></div>
+      <div class="grid2" style="margin-top:14px">
+        <div class="field"><label for="sbHost">Address</label><input class="inp mono" id="sbHost" value="127.0.0.1"></div>
+        <div class="field"><label for="sbPort">Port</label><input class="inp mono" id="sbPort" value="8080"></div>
+      </div>
+      <div class="field"><label for="sbPass">Password (optional)</label><input class="inp mono" id="sbPass" type="password" placeholder="none"></div>
+    </section>
+    <section class="card">
+      <h2>OBS overlay</h2>
+      <button class="btn primary" id="overlayBtn" style="width:100%">Copy overlay URL</button>
+      <details class="disclosure export"><summary>Raw config</summary><pre id="configOut">{}</pre>
+        <div class="btns"><button class="btn ghost" id="copyCfg">Copy config JSON</button></div>
+      </details>
+    </section>
+  </section>
 
-    <div class="preview-col">
-      <div class="panel" style="padding:20px">
-        <div class="eyebrow">Live preview</div>
-        <div class="stage">
-          <div class="checker"></div>
-          <div class="widget" id="widget" data-corner="bl">
-            <div class="w-icon" id="wIcon">Y</div>
-            <div class="w-text"><span class="w-primary" id="wPrimary">Baldur's Gate 3 Goes Too Far</span><span class="w-secondary" id="wSecondary">youtube</span></div>
-          </div>
-          <div class="stage-foot">OBS browser source</div>
-        </div>
-        <select class="simsel inp" id="simSelect" aria-label="Simulate a change"></select>
-        <div class="preview-actions">
-          <button class="btn primary" id="testPop">Test pop</button>
-          <button class="btn" id="playExit">Play exit</button>
-        </div>
-        <div class="preview-actions">
-          <button class="btn primary" id="reshowBtn" disabled>Reshow now</button>
-          <button class="btn" id="saveBtn" disabled>Save to Streamer.bot</button>
-        </div>
-        <div class="export">
-          <div class="eyebrow">Config</div>
-          <pre id="configOut">{}</pre>
-          <button class="btn" id="copyBtn">Copy config</button>
-          <button class="btn" id="overlayBtn" style="margin-top:8px;">Copy overlay URL</button>
+</div>
+
+<!-- preview block, relocated into the active view -->
+<div id="previewHolder" hidden>
+  <div id="previewBlock">
+    <section class="card">
+      <h2>Preview <span class="side">live box</span></h2>
+      <div class="stage">
+        <div class="checker"></div>
+        <div class="box" id="box" data-corner="bl">
+          <div class="bi" id="bIcon">Y</div>
+          <div><div class="bp" id="bPrimary">Baldur's Gate 3 Goes Too Far</div><div class="bs" id="bSecondary"></div></div>
         </div>
       </div>
-    </div>
-
+      <div class="btns"><button class="btn ghost" id="testBtn">Test pop</button><button class="btn ghost" id="exitBtn">Play exit</button></div>
+    </section>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 "use strict";
 
-/* ===== registry — shared contract, editable at runtime ===== */
 let REGISTRY = [
   { key:"youtube", label:"YouTube", glyph:"Y", mode:"full",  color:"#ff4d4d", suffix:" - YouTube" },
   { key:"spotify", label:"Spotify", glyph:"S", mode:"media", color:"#1ed760", suffix:" | Spotify" },
 ];
 const ACCENT_PRESETS = ["#a855f7","#e879a6","#22d3ee","#f5b544","#4ade80","#fb7185"];
-/* Where you host the overlay. Update to your real URL. */
 const OVERLAY_BASE = "https://widgets.themadcurve.cc/window-watcher/window-watcher-overlay.html";
+const GUIDE_URL = "https://themadcurve.cc"; /* point at your Notion setup guide */
+
 const SAMPLES = {
-  youtube:{ site:"youtube", state:"browsing", primary:"Baldur's Gate 3 Goes Too Far", secondary:"youtube" },
+  youtube:{ site:"youtube", state:"browsing", primary:"Baldur's Gate 3 Goes Too Far", secondary:"" },
   spotify:{ site:"spotify", state:"playing",  primary:"Prologue: One Ring to Rule Them All", secondary:"Howard Shore" },
 };
-const config = {
-  theme:"dark", accent:"#A855F7", sites:{},
-  behavior:{ onScreenSeconds:30, corner:"bl", fadeInMs:800, fadeOutMs:600, showArtist:true },
-};
+const config = { theme:"dark", accent:"#A855F7", sites:{}, behavior:{ onScreenSeconds:30, corner:"bl", fadeInMs:800, fadeOutMs:600, showArtist:true } };
+const conn = { host:"127.0.0.1", port:"8080", pass:"" };
 REGISTRY.forEach(s => config.sites[s.key] = { enabled:true, accent:null });
 
 const $ = s => document.querySelector(s);
 const byKey = k => REGISTRY.find(s => s.key === k);
 const RS = String.fromCharCode(0x1E), US = String.fromCharCode(0x1F);
+const STORE = "ww_dock_v1";
 
-/* ===== toast ===== */
+function saveLocal(){ try{ localStorage.setItem(STORE, JSON.stringify({ config, registry:REGISTRY, conn })); }catch(e){} }
+function loadLocal(){ try{ return JSON.parse(localStorage.getItem(STORE)); }catch(e){ return null; } }
+
 let toastTimer;
-function toast(msg){
-  const t=$("#toast"); t.textContent=msg; t.classList.add("show");
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),1800);
+function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),1600); }
+
+/* ===== status icon (custom SVGs with dot fallback) ===== */
+function fallbackIcon(img){
+  const color = img.dataset.state === "connected" ? "#3fd17a" : "#7a7093";
+  img.onerror=null;
+  img.src = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"><circle cx="6" cy="6" r="5" fill="'+color+'"/></svg>');
+}
+function setStatus(connected){
+  const img=$("#statusIcon");
+  img.dataset.state=connected?"connected":"disconnected";
+  img.onerror=function(){ fallbackIcon(img); };
+  img.src=connected?"./connected.svg":"./disconnected.svg";
+  img.alt=img.title=connected?"Connected":"Disconnected";
+  const img2=$("#statusIcon2"); if(img2){ img2.dataset.state=img.dataset.state; img2.onerror=function(){ fallbackIcon(img2); }; img2.src=img.src; }
+  const ct=$("#connText"); if(ct) ct.textContent=connected?"Connected":"Disconnected";
+  $("#offline").dataset.show=connected?"0":"1";
+  $("#reshowBtn").disabled=!connected;
 }
 
-/* ===== Streamer.bot WebSocket client =====
-   Best-effort auth: works out of the box with no password (loopback).
-   If a password is set, it attempts the SHA-256 challenge handshake —
-   verify against your Streamer.bot version, or leave the password blank
-   during setup since the server is localhost-only. */
+/* ===== Streamer.bot (auto-connect + reconnect) ===== */
 const SB = {
-  ws:null, connected:false, pass:"",
-  async sha256b64(str){
-    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
-    return btoa(String.fromCharCode(...new Uint8Array(buf)));
-  },
-  connect(host, port, pass){
-    this.disconnect();
-    this.pass = pass || "";
-    setStatus("connecting","Connecting…");
-    let ws;
-    try { ws = new WebSocket("ws://"+host+":"+port+"/"); }
-    catch(e){ setStatus("error","Bad address"); return; }
-    this.ws = ws;
-    ws.onopen = () => { if(!this.pass) this.ready(); };
-    ws.onerror = () => setStatus("error","Can't reach Streamer.bot");
-    ws.onclose = () => { this.connected=false; setStatus("disconnected","Not connected"); setLive(false); $("#connectBtn").textContent="Connect"; };
-    ws.onmessage = async (ev) => {
-      let msg; try { msg = JSON.parse(ev.data); } catch { return; }
-      // auth challenge
-      if(msg.authentication && msg.authentication.salt){
-        const secret = await this.sha256b64(this.pass + msg.authentication.salt);
-        const auth = await this.sha256b64(secret + msg.authentication.challenge);
-        this.send({ request:"Authenticate", authentication:auth });
-        return;
-      }
-      // treat a Hello without auth, or an Authenticate OK, as ready
-      if((msg.request==="Hello" && !msg.authentication) || (msg.status==="ok" && !this.connected)){
-        this.ready(); return;
-      }
-      // broadcasts from the watcher (General.Custom)
-      if(msg.event && msg.event.type==="Custom" && msg.data && msg.data.v){
-        applyLive(msg.data);
-      }
+  ws:null, connected:false, backoff:1000, wantOpen:false,
+  async sha(str){ const b=await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)); return btoa(String.fromCharCode(...new Uint8Array(b))); },
+  open(){
+    this.wantOpen=true;
+    try{ this.ws=new WebSocket("ws://"+conn.host+":"+conn.port+"/"); }catch(e){ this.retry(); return; }
+    this.ws.onopen=()=>{ if(!conn.pass) this.ready(); };
+    this.ws.onclose=()=>{ this.connected=false; setStatus(false); if(this.wantOpen) this.retry(); };
+    this.ws.onerror=()=>{};
+    this.ws.onmessage=async(ev)=>{
+      let m; try{ m=JSON.parse(ev.data); }catch{ return; }
+      if(m.authentication && m.authentication.salt){ const secret=await this.sha(conn.pass+m.authentication.salt); this.send({ request:"Authenticate", authentication:await this.sha(secret+m.authentication.challenge) }); return; }
+      if((m.request==="Hello" && !m.authentication) || (m.status==="ok" && !this.connected)){ this.ready(); return; }
+      if(m.event && m.event.type==="Custom" && m.data && m.data.v){ applyLive(m.data); }
     };
   },
-  ready(){
-    this.connected=true;
-    setStatus("connected","Connected");
-    setLive(true);
-    $("#connectBtn").textContent="Disconnect";
-    this.send({ request:"Subscribe", events:{ General:["Custom"] } });
-    toast("Connected to Streamer.bot");
-  },
-  disconnect(){ if(this.ws){ try{ this.ws.close(); }catch(e){} this.ws=null; } this.connected=false; },
-  send(obj){ if(this.ws && this.ws.readyState===1){ obj.id = obj.id || ("m"+Date.now()); this.ws.send(JSON.stringify(obj)); } },
-  doAction(name, args){ this.send({ request:"DoAction", action:{ name }, args: args||{} }); },
+  ready(){ this.connected=true; this.backoff=1000; setStatus(true); this.send({ request:"Subscribe", events:{ General:["Custom"] } }); },
+  retry(){ setTimeout(()=>{ if(this.wantOpen) this.open(); }, this.backoff); this.backoff=Math.min(15000,this.backoff*2); },
+  close(){ this.wantOpen=false; if(this.ws){ try{ this.ws.close(); }catch(e){} } },
+  reconnect(){ this.close(); this.backoff=1000; setTimeout(()=>this.open(),120); },
+  send(o){ if(this.ws && this.ws.readyState===1){ o.id=o.id||("m"+Date.now()); this.ws.send(JSON.stringify(o)); } },
+  doAction(name,args){ this.send({ request:"DoAction", action:{ name }, args:args||{} }); },
 };
 
-function setStatus(state, text){ $("#dot").dataset.s=state; $("#statusText").textContent=text; }
-function setLive(on){ $("#reshowBtn").disabled=!on; $("#saveBtn").disabled=!on; }
-
-$("#connectBtn").addEventListener("click",()=>{
-  if(SB.connected){ SB.disconnect(); return; }
-  SB.connect($("#sbHost").value.trim(), $("#sbPort").value.trim(), $("#sbPass").value);
-});
-
-/* apply a live broadcast to the preview */
-function applyLive(data){
-  const site = byKey(data.site);
-  renderPreview({ site:data.site, state:data.state, primary:data.primary || data.label, secondary:data.secondary }, site ? null : data);
-  pop();
+/* ===== persistence ===== */
+let saveTimer;
+function persist(){
+  saveLocal(); writeRaw();
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{ if(SB.connected){ SB.doAction("Save Window Watcher Config",{ registry:registryString(), config:JSON.stringify({ ...config, registry:REGISTRY }) }); const s=$("#saveState"); s.textContent="Saved"; setTimeout(()=>{ if(s.textContent==="Saved") s.textContent=""; },1200); } },500);
 }
+function registryString(){ return REGISTRY.filter(s=>config.sites[s.key]&&config.sites[s.key].enabled).map(s=>[s.key,s.label,s.suffix,s.mode,(config.sites[s.key].accent||s.color)].join(US)).join(RS); }
+function writeRaw(){ $("#configOut").textContent=JSON.stringify({ ...config, registry:REGISTRY },null,2); }
 
-/* ===== save + reshow ===== */
-function registryString(){
-  return REGISTRY.filter(s => config.sites[s.key] && config.sites[s.key].enabled)
-    .map(s => [s.key, s.label, s.suffix, s.mode, (config.sites[s.key].accent || s.color)].join(US)).join(RS);
+function overlayUrl(){ const p=new URLSearchParams({ host:conn.host, port:conn.port, accent:config.accent.replace("#",""), theme:config.theme, corner:config.behavior.corner, in:config.behavior.fadeInMs, out:config.behavior.fadeOutMs, hold:config.behavior.onScreenSeconds, artist:config.behavior.showArtist?1:0 }); return OVERLAY_BASE+"?"+p.toString(); }
+$("#overlayBtn").onclick=()=>navigator.clipboard.writeText(overlayUrl()).then(()=>toast("Overlay URL copied"));
+$("#copyCfg").onclick=()=>navigator.clipboard.writeText(JSON.stringify({ ...config, registry:REGISTRY })).then(()=>toast("Config copied"));
+
+/* ===== navigation ===== */
+function navigate(view){
+  document.querySelectorAll(".view").forEach(v=>v.hidden=(v.id!=="view-"+view));
+  $("#menu").hidden=true; $("#menuBtn").setAttribute("aria-expanded","false");
+  const host = (view==="appearance"||view==="behavior") ? $("#view-"+view+" .previewSlot") : null;
+  const pb=$("#previewBlock");
+  if(host){ host.appendChild(pb); renderPreview(lastSample); enter(); }
+  else{ $("#previewHolder").appendChild(pb); }
+  window.scrollTo(0,0);
 }
-$("#saveBtn").addEventListener("click",()=>{
-  SB.doAction("Save Window Watcher Config", { registry:registryString(), config:JSON.stringify({ ...config, registry:REGISTRY }) });
-  toast("Saved to Streamer.bot");
-});
-$("#reshowBtn").addEventListener("click",()=>{
-  SB.doAction("Window Watcher Action", { mode:"reshow" });
-  toast("Reshow sent");
-});
+$("#menuBtn").onclick=()=>{ const m=$("#menu"); m.hidden=!m.hidden; $("#menuBtn").setAttribute("aria-expanded", m.hidden?"false":"true"); };
+document.querySelectorAll("#menu button").forEach(b=>b.onclick=()=>navigate(b.dataset.view));
+document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>navigate("sites"));
+$("#guideLink").href=GUIDE_URL;
+$("#retryBtn").onclick=()=>{ SB.reconnect(); toast("Reconnecting…"); };
+$("#retryBtn2").onclick=()=>{ SB.reconnect(); toast("Reconnecting…"); };
 
-/* ===== overlay URL ===== */
-function overlayUrl(){
-  const p = new URLSearchParams({
-    host: $("#sbHost").value.trim() || "127.0.0.1",
-    port: $("#sbPort").value.trim() || "8080",
-    accent: config.accent.replace("#",""),
-    theme: config.theme,
-    corner: config.behavior.corner,
-    in: config.behavior.fadeInMs,
-    out: config.behavior.fadeOutMs,
-    hold: config.behavior.onScreenSeconds,
-    artist: config.behavior.showArtist ? 1 : 0
-  });
-  return OVERLAY_BASE + "?" + p.toString();
-}
-$("#overlayBtn").addEventListener("click",()=>{
-  navigator.clipboard.writeText(overlayUrl()).then(()=>{
-    const b=$("#overlayBtn"); const t=b.textContent; b.textContent="Copied — paste into OBS";
-    setTimeout(()=>b.textContent=t,1400);
-  });
-});
+["sbHost","sbPort","sbPass"].forEach(id=>$("#"+id).addEventListener("change",()=>{ conn.host=$("#sbHost").value.trim()||"127.0.0.1"; conn.port=$("#sbPort").value.trim()||"8080"; conn.pass=$("#sbPass").value; saveLocal(); SB.reconnect(); }));
 
-/* ===== theme ===== */
-function setTheme(t){ config.theme=t; document.documentElement.dataset.theme=t; $("#themeDark").setAttribute("aria-pressed",t==="dark"); $("#themeLight").setAttribute("aria-pressed",t==="light"); writeConfig(); }
-$("#themeDark").onclick=()=>setTheme("dark");
-$("#themeLight").onclick=()=>setTheme("light");
-
-/* ===== accent ===== */
-function setAccent(hex){
-  hex=hex.toUpperCase(); config.accent=hex;
-  document.documentElement.style.setProperty("--accent",hex);
-  $("#hexInput").value=hex; $("#hexSwatch").style.background=hex;
-  document.querySelectorAll(".swatch").forEach(el=>el.setAttribute("aria-pressed", el.dataset.hex.toUpperCase()===hex));
-  writeConfig();
-}
-const swatchWrap=$("#swatches");
-ACCENT_PRESETS.forEach(hex=>{
-  const b=document.createElement("button");
-  b.className="swatch"; b.dataset.hex=hex; b.style.background=hex; b.style.setProperty("--swatch",hex);
-  b.setAttribute("aria-label","Accent "+hex); b.setAttribute("aria-pressed","false");
-  b.onclick=()=>setAccent(hex); swatchWrap.appendChild(b);
-});
+/* ===== theme / accent ===== */
+function setTheme(t){ config.theme=t; document.documentElement.dataset.theme=t; $("#thDark").setAttribute("aria-pressed",t==="dark"); $("#thLight").setAttribute("aria-pressed",t==="light"); persist(); }
+$("#thDark").onclick=()=>setTheme("dark"); $("#thLight").onclick=()=>setTheme("light");
+function setAccent(hex){ hex=hex.toUpperCase(); config.accent=hex; document.documentElement.style.setProperty("--accent",hex); $("#hexInput").value=hex; $("#hexDot").style.background=hex; document.querySelectorAll(".swatch").forEach(el=>el.setAttribute("aria-pressed", el.dataset.hex.toUpperCase()===hex)); persist(); }
+ACCENT_PRESETS.forEach(hex=>{ const b=document.createElement("button"); b.className="swatch"; b.dataset.hex=hex; b.style.background=hex; b.style.setProperty("--swatch",hex); b.setAttribute("aria-pressed","false"); b.onclick=()=>setAccent(hex); $("#swatches").appendChild(b); });
 $("#hexInput").addEventListener("input",e=>{ let v=e.target.value.trim(); if(!v.startsWith("#")) v="#"+v; if(/^#[0-9a-fA-F]{6}$/.test(v)) setAccent(v); });
 
-/* ===== site rows ===== */
+/* ===== sites ===== */
 function renderSites(){
   const list=$("#siteList"); list.innerHTML="";
   REGISTRY.forEach(site=>{
     const c=config.sites[site.key];
-    const row=document.createElement("div"); row.className="site"; row.dataset.enabled=c.enabled;
-    row.innerHTML=`
-      <div class="site-icon" style="--site-color:${c.accent||site.color}">${site.glyph}</div>
-      <div class="site-meta"><div class="name">${site.label}</div><div class="detail"><span class="mode-badge">${site.mode}</span>${site.suffix}</div></div>
+    const row=document.createElement("div"); row.className="site"; row.dataset.on=c.enabled;
+    row.innerHTML=`<div class="si" style="--sc:${c.accent||site.color}">${site.glyph}</div>
+      <div><div class="nm">${site.label}</div><div class="dt">${site.mode}${site.suffix}</div></div>
       <input type="checkbox" class="toggle" ${c.enabled?"checked":""} aria-label="Watch ${site.label}">
-      <button class="icon-btn" title="Remove ${site.label}" aria-label="Remove ${site.label}">×</button>`;
-    row.querySelector(".toggle").addEventListener("change",e=>{ c.enabled=e.target.checked; row.dataset.enabled=c.enabled; writeConfig(); });
-    row.querySelector(".icon-btn").addEventListener("click",()=>{ REGISTRY=REGISTRY.filter(s=>s.key!==site.key); delete config.sites[site.key]; renderSites(); refreshSimOptions(); writeConfig(); });
+      <button class="x" title="Remove ${site.label}">×</button>`;
+    row.querySelector(".toggle").addEventListener("change",e=>{ c.enabled=e.target.checked; row.dataset.on=c.enabled; persist(); });
+    row.querySelector(".x").addEventListener("click",()=>{ REGISTRY=REGISTRY.filter(s=>s.key!==site.key); delete config.sites[site.key]; renderSites(); persist(); });
     list.appendChild(row);
   });
 }
-$("#addSiteBtn").addEventListener("click",()=>{
-  const name=$("#asName").value.trim(); const suffix=$("#asSuffix").value;
+$("#addBtn").onclick=()=>{
+  const name=$("#asName").value.trim(), suffix=$("#asSuffix").value;
   if(!name || !suffix.trim()) return;
-  const key=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || ("site"+Date.now());
+  const key=name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")||("site"+Date.now());
   if(byKey(key)) return;
-  const site={ key, label:name, glyph:name[0].toUpperCase(), mode:$("#asMode").value, color:$("#asColor").value, suffix };
-  REGISTRY.push(site); config.sites[key]={ enabled:true, accent:null };
-  SAMPLES[key]={ site:key, state:site.mode==="media"?"playing":"browsing", primary:name+" — example title", secondary:site.mode==="media"?"Artist name":key };
+  REGISTRY.push({ key, label:name, glyph:name[0].toUpperCase(), mode:$("#asMode").value, color:$("#asColor").value, suffix });
+  config.sites[key]={ enabled:true, accent:null };
+  SAMPLES[key]={ site:key, state:$("#asMode").value==="media"?"playing":"browsing", primary:name+" — example title", secondary:$("#asMode").value==="media"?"Artist name":"" };
   $("#asName").value=""; $("#asSuffix").value="";
-  renderSites(); refreshSimOptions(); writeConfig();
-});
+  renderSites(); persist(); toast("Site added");
+};
 
 /* ===== behavior ===== */
-$("#duration").addEventListener("input",e=>{ config.behavior.onScreenSeconds=parseInt(e.target.value,10); $("#durVal").textContent=e.target.value+"s"; writeConfig(); });
-$("#fadeIn").addEventListener("input",e=>{ config.behavior.fadeInMs=parseInt(e.target.value,10); $("#inVal").textContent=e.target.value+"ms"; writeConfig(); });
-$("#fadeOut").addEventListener("input",e=>{ config.behavior.fadeOutMs=parseInt(e.target.value,10); $("#outVal").textContent=e.target.value+"ms"; writeConfig(); });
-$("#corner").addEventListener("change",e=>{ config.behavior.corner=e.target.value; $("#widget").dataset.corner=e.target.value; enter(); writeConfig(); });
-$("#showArtist").addEventListener("change",e=>{ config.behavior.showArtist=e.target.checked; renderPreview(lastSample); writeConfig(); });
+$("#duration").addEventListener("input",e=>{ config.behavior.onScreenSeconds=+e.target.value; $("#durVal").textContent=e.target.value+"s"; persist(); });
+$("#fadeIn").addEventListener("input",e=>{ config.behavior.fadeInMs=+e.target.value; $("#inVal").textContent=e.target.value+"ms"; persist(); });
+$("#fadeOut").addEventListener("input",e=>{ config.behavior.fadeOutMs=+e.target.value; $("#outVal").textContent=e.target.value+"ms"; persist(); });
+$("#corner").addEventListener("change",e=>{ config.behavior.corner=e.target.value; $("#box").dataset.corner=e.target.value; enter(); persist(); });
+$("#showArtist").addEventListener("change",e=>{ config.behavior.showArtist=e.target.checked; renderPreview(lastSample); persist(); });
 
 /* ===== preview ===== */
 let lastSample=SAMPLES.youtube;
-function renderPreview(sample, unknownSite){
-  if(!sample) return;
-  lastSample=sample;
-  const site = byKey(sample.site);
-  $("#wIcon").textContent = site ? site.glyph : (unknownSite && unknownSite.label ? unknownSite.label[0].toUpperCase() : "•");
-  $("#wIcon").style.setProperty("--w-color", (site && config.sites[site.key] && config.sites[site.key].accent) || (site && site.color) || "var(--accent)");
-  $("#wPrimary").textContent = sample.primary;
-  $("#wSecondary").textContent = sample.secondary || (site ? site.key : "");
-  const isMedia = site ? site.mode==="media" : (sample.state==="playing");
-  $("#wSecondary").style.display = (isMedia && !config.behavior.showArtist) ? "none" : "";
+function renderPreview(s){
+  if(!s) return; lastSample=s;
+  const site=byKey(s.site);
+  $("#bIcon").textContent = site ? site.glyph : (s.primary[0]||"•").toUpperCase();
+  $("#bIcon").style.setProperty("--bc",(site && config.sites[site.key] && config.sites[site.key].accent) || (site && site.color) || "var(--accent)");
+  $("#bPrimary").textContent = s.primary || (site?site.label:"");
+  const show = s.state==="playing" && config.behavior.showArtist && s.secondary;
+  $("#bSecondary").textContent = show ? s.secondary : "";
+  $("#bSecondary").style.display = show ? "" : "none";
 }
-
-/* slide + fade from the corner's own side */
+const sideOff=()=>(config.behavior.corner==="bl"||config.behavior.corner==="tl")?"translateX(calc(-100% - 28px))":"translateX(calc(100% + 28px))";
 let leaveTimer;
-function offset(){ const s=(config.behavior.corner==="bl"||config.behavior.corner==="tl")?"left":"right"; return s==="left"?"translateX(calc(-100% - 32px))":"translateX(calc(100% + 32px))"; }
-function enter(){ const w=$("#widget"); const off=offset(); clearTimeout(leaveTimer); w.style.transition="none"; w.style.opacity="0"; w.style.transform=off; void w.offsetWidth; const inMs=config.behavior.fadeInMs; w.style.transition=`transform ${inMs}ms var(--ease),opacity ${inMs}ms var(--ease)`; w.style.opacity="1"; w.style.transform="translateX(0)"; }
-function leave(){ const w=$("#widget"); const outMs=config.behavior.fadeOutMs; w.style.transition=`transform ${outMs}ms var(--ease),opacity ${outMs}ms var(--ease)`; w.style.opacity="0"; w.style.transform=offset(); }
-function pop(){ enter(); clearTimeout(leaveTimer); leaveTimer=setTimeout(leave, config.behavior.fadeInMs + config.behavior.onScreenSeconds*1000); }
+function enter(){ const b=$("#box"); if(!b) return; const off=sideOff(); clearTimeout(leaveTimer); b.style.transition="none"; b.style.opacity="0"; b.style.transform=off; void b.offsetWidth; const i=config.behavior.fadeInMs; b.style.transition=`transform ${i}ms var(--ease),opacity ${i}ms var(--ease)`; b.style.opacity="1"; b.style.transform="translateX(0)"; }
+function leave(){ const b=$("#box"); if(!b) return; const o=config.behavior.fadeOutMs; b.style.transition=`transform ${o}ms var(--ease),opacity ${o}ms var(--ease)`; b.style.opacity="0"; b.style.transform=sideOff(); }
+function pop(){ enter(); clearTimeout(leaveTimer); leaveTimer=setTimeout(leave, config.behavior.fadeInMs+config.behavior.onScreenSeconds*1000); }
+$("#testBtn").onclick=pop; $("#exitBtn").onclick=leave;
+$("#reshowBtn").onclick=()=>{ SB.doAction("Window Watcher Action",{ mode:"reshow" }); toast("Reshow sent"); };
+function applyLive(d){ renderPreview({ site:d.site, state:d.state, primary:d.primary||d.label, secondary:d.secondary }); pop(); }
 
-$("#simSelect").addEventListener("change",e=>{ renderPreview(SAMPLES[e.target.value]); pop(); });
-$("#testPop").addEventListener("click",pop);
-$("#playExit").addEventListener("click",leave);
-
-function refreshSimOptions(){
-  const sel=$("#simSelect"); const cur=sel.value; sel.innerHTML="";
-  REGISTRY.forEach(s=>{ const o=document.createElement("option"); o.value=s.key; o.textContent="Simulate — "+s.label; sel.appendChild(o); });
-  if(REGISTRY.some(s=>s.key===cur)) sel.value=cur;
-  else if(REGISTRY[0]) renderPreview(SAMPLES[REGISTRY[0].key]);
+/* ===== restore + init ===== */
+function applyAll(){
+  document.documentElement.dataset.theme=config.theme;
+  $("#thDark").setAttribute("aria-pressed",config.theme==="dark"); $("#thLight").setAttribute("aria-pressed",config.theme==="light");
+  document.documentElement.style.setProperty("--accent",config.accent);
+  $("#hexInput").value=config.accent; $("#hexDot").style.background=config.accent;
+  document.querySelectorAll(".swatch").forEach(el=>el.setAttribute("aria-pressed", el.dataset.hex.toUpperCase()===config.accent.toUpperCase()));
+  $("#corner").value=config.behavior.corner; $("#box").dataset.corner=config.behavior.corner;
+  $("#duration").value=config.behavior.onScreenSeconds; $("#durVal").textContent=config.behavior.onScreenSeconds+"s";
+  $("#fadeIn").value=config.behavior.fadeInMs; $("#inVal").textContent=config.behavior.fadeInMs+"ms";
+  $("#fadeOut").value=config.behavior.fadeOutMs; $("#outVal").textContent=config.behavior.fadeOutMs+"ms";
+  $("#showArtist").checked=config.behavior.showArtist;
+  $("#sbHost").value=conn.host; $("#sbPort").value=conn.port; $("#sbPass").value=conn.pass;
+  renderSites(); renderPreview(SAMPLES.youtube); writeRaw();
 }
-
-/* ===== export ===== */
-function writeConfig(){ $("#configOut").textContent=JSON.stringify({ ...config, registry:REGISTRY }, null, 2); }
-$("#copyBtn").addEventListener("click",()=>{ navigator.clipboard.writeText(JSON.stringify({ ...config, registry:REGISTRY })).then(()=>{ const b=$("#copyBtn"); const t=b.textContent; b.textContent="Copied"; setTimeout(()=>b.textContent=t,1200); }); });
-
-/* ===== init ===== */
-renderSites(); refreshSimOptions(); renderPreview(SAMPLES.youtube); setAccent(config.accent);
-$("#widget").dataset.corner=config.behavior.corner; writeConfig(); setTimeout(pop,400);
+(function init(){
+  const saved=loadLocal();
+  if(saved){
+    if(saved.config){ Object.assign(config, saved.config); if(saved.config.behavior) Object.assign(config.behavior, saved.config.behavior); if(saved.config.sites) config.sites=saved.config.sites; }
+    if(Array.isArray(saved.registry) && saved.registry.length) REGISTRY=saved.registry;
+    if(saved.conn) Object.assign(conn, saved.conn);
+    REGISTRY.forEach(s=>{ if(!config.sites[s.key]) config.sites[s.key]={ enabled:true, accent:null }; SAMPLES[s.key]=SAMPLES[s.key]||{ site:s.key, state:s.mode==="media"?"playing":"browsing", primary:s.label+" — example title", secondary:s.mode==="media"?"Artist name":"" }; });
+  }
+  applyAll();
+  setStatus(false);
+  navigate("sites");
+  SB.open();
+})();
 </script>
 </body>
 </html>
