@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Window Watcher | Overlay</title>
+<style>
+/* ============================================================
+   Window Watcher — OBS overlay (browser source)
+   Dependency-free: no fonts, no libraries, no CDN. One file.
+   Appearance comes from URL params; title data arrives over the
+   Streamer.bot WebSocket as General.Custom broadcasts.
+
+   Params:
+     host   Streamer.bot address   (default 127.0.0.1)
+     port   Streamer.bot WS port    (default 8080)
+     accent hex without #           (default a855f7)
+     theme  dark | light            (default dark)
+     corner bl | br | tl | tr        (default bl)
+     in     fade-in ms              (default 800)
+     out    fade-out ms             (default 600)
+     hold   on-screen seconds        (default 30)
+     artist 1 | 0  (show artist line) (default 1)
+     debug  1  (show status + self-test)
+   ============================================================ */
+
+:root { --accent:#a855f7; }
+[data-theme="dark"]  { --box-bg:rgba(12,7,22,.82);  --text:#f2ecff; --muted:#b9addb; --border-mix:38%; }
+[data-theme="light"] { --box-bg:rgba(255,255,255,.9); --text:#1c1233; --muted:#5f5480; --border-mix:45%; }
+
+* { box-sizing:border-box; }
+html, body {
+  margin:0; height:100%; width:100%;
+  background:transparent;               /* OBS composites over this */
+  overflow:hidden;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+
+#box {
+  position:fixed;
+  display:inline-flex; align-items:center; gap:11px;
+  max-width:calc(100vw - 40px);
+  padding:11px 16px 11px 12px;
+  border-radius:13px;
+  background:var(--box-bg);
+  border:1px solid color-mix(in srgb, var(--accent) var(--border-mix), transparent);
+  box-shadow:0 8px 26px color-mix(in srgb, var(--accent) 26%, transparent);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  color:var(--text);
+  opacity:0; white-space:nowrap;
+  will-change:transform,opacity;
+}
+#box[data-corner="bl"] { left:20px;  bottom:20px; }
+#box[data-corner="br"] { right:20px; bottom:20px; }
+#box[data-corner="tl"] { left:20px;  top:20px; }
+#box[data-corner="tr"] { right:20px; top:20px; }
+
+#icon {
+  width:36px; height:36px; border-radius:9px;
+  display:grid; place-items:center;
+  font-weight:700; font-size:16px; color:#fff;
+  background:var(--accent);
+  flex-shrink:0;
+}
+#text { display:flex; flex-direction:column; line-height:1.25; min-width:0; }
+#primary { font-weight:600; font-size:15px; letter-spacing:-.005em; overflow:hidden; text-overflow:ellipsis; }
+#secondary { font-size:12px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; }
+
+#dbg {
+  position:fixed; top:8px; left:8px;
+  font:11px/1.4 ui-monospace,monospace;
+  color:#8de; background:rgba(0,0,0,.55);
+  padding:6px 9px; border-radius:6px; display:none; white-space:pre;
+}
+body[data-debug="1"] #dbg { display:block; }
+
+@media (prefers-reduced-motion:reduce){ #box{ transition:opacity .15s linear !important; } }
+</style>
+</head>
+<body>
+  <div id="box" data-corner="bl">
+    <div id="icon">•</div>
+    <div id="text">
+      <span id="primary"></span>
+      <span id="secondary"></span>
+    </div>
+  </div>
+  <div id="dbg">starting…</div>
+
+<script>
+"use strict";
+
+/* ---------- read params ---------- */
+const P = new URLSearchParams(location.search);
+const HOST   = P.get("host") || "127.0.0.1";
+const PORT   = P.get("port") || "8080";
+const PASS   = P.get("pass") || "";            /* avoid putting a password in a URL shown on stream */
+const ACCENT = "#" + (P.get("accent") || "a855f7").replace(/^#/, "");
+const THEME  = P.get("theme") === "light" ? "light" : "dark";
+const CORNER = ["bl","br","tl","tr"].includes(P.get("corner")) ? P.get("corner") : "bl";
+const IN_MS  = clampNum(P.get("in"), 200, 4000, 800);
+const OUT_MS = clampNum(P.get("out"), 200, 4000, 600);
+const HOLD_S = clampNum(P.get("hold"), 1, 600, 30);
+const ARTIST = P.get("artist") !== "0";
+const DEBUG  = P.get("debug") === "1";
+
+function clampNum(v, lo, hi, dflt){ const n = parseInt(v,10); return isNaN(n) ? dflt : Math.min(hi, Math.max(lo, n)); }
+
+/* ---------- apply appearance ---------- */
+document.documentElement.style.setProperty("--accent", ACCENT);
+document.documentElement.dataset.theme = THEME;
+document.body.dataset.debug = DEBUG ? "1" : "0";
+const box = document.getElementById("box");
+const iconEl = document.getElementById("icon");
+const primaryEl = document.getElementById("primary");
+const secondaryEl = document.getElementById("secondary");
+box.dataset.corner = CORNER;
+
+function dbg(msg){ if(DEBUG) document.getElementById("dbg").textContent = msg; }
+
+/* ---------- animation (slide + fade from the corner's own side) ---------- */
+const SIDE = (CORNER === "bl" || CORNER === "tl") ? "left" : "right";
+const OFF  = SIDE === "left" ? "translateX(calc(-100% - 40px))" : "translateX(calc(100% + 40px))";
+let leaveTimer;
+
+function enter(){
+  box.style.transition = "none";
+  box.style.opacity = "0";
+  box.style.transform = OFF;
+  void box.offsetWidth;
+  box.style.transition = "transform " + IN_MS + "ms cubic-bezier(.22,.61,.36,1), opacity " + IN_MS + "ms cubic-bezier(.22,.61,.36,1)";
+  box.style.opacity = "1";
+  box.style.transform = "translateX(0)";
+}
+function leave(){
+  box.style.transition = "transform " + OUT_MS + "ms cubic-bezier(.22,.61,.36,1), opacity " + OUT_MS + "ms cubic-bezier(.22,.61,.36,1)";
+  box.style.opacity = "0";
+  box.style.transform = OFF;
+}
+/* latest-wins: a new title replaces whatever is showing and restarts the hold */
+function pop(){
+  enter();
+  clearTimeout(leaveTimer);
+  leaveTimer = setTimeout(leave, IN_MS + HOLD_S * 1000);
+}
+
+/* ---------- render a payload ---------- */
+function show(d){
+  const color = (d.color && d.color !== "") ? d.color : ACCENT;
+  iconEl.style.background = color;
+  const label = d.label || d.site || "";
+  iconEl.textContent = (label[0] || "•").toUpperCase();
+
+  primaryEl.textContent = d.primary || d.label || "";
+  const wantSecondary = d.state === "playing" && ARTIST && d.secondary;
+  secondaryEl.textContent = wantSecondary ? d.secondary : "";
+  secondaryEl.style.display = wantSecondary ? "" : "none";
+
+  pop();
+  dbg("shown: " + (d.primary || d.label || "?"));
+}
+
+/* ---------- Streamer.bot connection with reconnect backoff ---------- */
+let ws, backoff = 1000;
+const MAX_BACKOFF = 15000;
+
+async function sha256b64(str){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return btoa(String.fromCharCode(...new Uint8Array(buf)));
+}
+function send(obj){ if(ws && ws.readyState === 1){ obj.id = obj.id || ("m"+Date.now()); ws.send(JSON.stringify(obj)); } }
+function subscribe(){ send({ request:"Subscribe", events:{ General:["Custom"] } }); }
+
+function connect(){
+  dbg("connecting ws://" + HOST + ":" + PORT + " …");
+  try { ws = new WebSocket("ws://" + HOST + ":" + PORT + "/"); }
+  catch(e){ scheduleReconnect(); return; }
+
+  ws.onopen = () => { if(!PASS){ ready(); } };
+  ws.onclose = () => { dbg("disconnected — retrying"); scheduleReconnect(); };
+  ws.onerror = () => { dbg("connection error"); };
+
+  ws.onmessage = async (ev) => {
+    let msg; try { msg = JSON.parse(ev.data); } catch { return; }
+
+    if(msg.authentication && msg.authentication.salt){
+      const secret = await sha256b64(PASS + msg.authentication.salt);
+      const auth = await sha256b64(secret + msg.authentication.challenge);
+      send({ request:"Authenticate", authentication:auth });
+      return;
+    }
+    if((msg.request === "Hello" && !msg.authentication) || (msg.status === "ok" && backoff !== 1000)){
+      ready(); return;
+    }
+    if(msg.event && msg.event.type === "Custom" && msg.data && msg.data.v){
+      show(msg.data);
+    }
+  };
+}
+function ready(){
+  backoff = 1000;
+  subscribe();
+  dbg("connected — waiting for titles");
+}
+function scheduleReconnect(){
+  setTimeout(connect, backoff);
+  backoff = Math.min(MAX_BACKOFF, backoff * 2);
+}
+
+/* ---------- go ---------- */
+connect();
+if(DEBUG){
+  setTimeout(() => show({ v:1, site:"youtube", label:"YouTube", state:"browsing",
+                          primary:"Debug — overlay is rendering", secondary:null, color:"#ff4d4d" }), 600);
+}
+</script>
+</body>
+</html>
