@@ -113,9 +113,7 @@ input[type="range"]{ width:100%; accent-color:var(--accent); }
 /* preview */
 .stage{ position:relative; height:170px; border-radius:var(--r-md); overflow:hidden; background:var(--bg-deep); border:1px solid var(--border-soft); }
 .stage .checker{ position:absolute; inset:0; opacity:.22; background-image:linear-gradient(45deg,var(--border-soft) 25%,transparent 25%),linear-gradient(-45deg,var(--border-soft) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--border-soft) 75%),linear-gradient(-45deg,transparent 75%,var(--border-soft) 75%); background-size:20px 20px; background-position:0 0,0 10px,10px -10px,-10px 0; }
-.box{ position:absolute; display:inline-flex; align-items:center; gap:9px; max-width:calc(100% - 28px); padding:9px 13px 9px 10px; border-radius:11px; background:color-mix(in srgb, var(--bg) 82%, transparent); border:1px solid color-mix(in srgb, var(--accent) 40%, var(--border)); backdrop-filter:blur(7px); box-shadow:0 5px 16px color-mix(in srgb, var(--accent) 22%, transparent); opacity:0; white-space:nowrap; }
-.box[data-corner="bl"]{ left:14px; bottom:14px; } .box[data-corner="br"]{ right:14px; bottom:14px; }
-.box[data-corner="tl"]{ left:14px; top:14px; } .box[data-corner="tr"]{ right:14px; top:14px; }
+.box{ position:absolute; left:14px; bottom:14px; display:inline-flex; align-items:center; gap:9px; max-width:calc(100% - 28px); padding:9px 13px 9px 10px; border-radius:11px; background:color-mix(in srgb, var(--bg) 82%, transparent); border:1px solid color-mix(in srgb, var(--accent) 40%, var(--border)); backdrop-filter:blur(7px); box-shadow:0 5px 16px color-mix(in srgb, var(--accent) 22%, transparent); opacity:0; white-space:nowrap; }
 .box .bi{ width:30px; height:30px; border-radius:8px; display:grid; place-items:center; color:#fff; font-family:var(--font-display); font-weight:700; font-size:13px; background:var(--bc,var(--accent)); flex-shrink:0; }
 .box .bp{ font-weight:600; font-size:13px; overflow:hidden; text-overflow:ellipsis; }
 .box .bs{ font-family:var(--font-mono); font-size:10.5px; color:var(--muted); }
@@ -197,10 +195,7 @@ input[type="range"]{ width:100%; accent-color:var(--accent); }
   <section class="view" id="view-behavior" hidden>
     <div class="subhead"><button class="back" data-back>‹ Back</button><h1>Behavior</h1></div>
     <section class="card">
-      <div class="field"><label for="corner">Corner</label>
-        <select class="inp" id="corner"><option value="bl">Bottom left</option><option value="br">Bottom right</option><option value="tl">Top left</option><option value="tr">Top right</option></select>
-      </div>
-      <div class="field"><label>On-screen time <span class="val" id="durVal">30s</span></label><input type="range" id="duration" min="5" max="120" step="1" value="30"></div>
+      <div class="field" style="margin-top:0"><label>On-screen time <span class="val" id="durVal">30s</span></label><input type="range" id="duration" min="5" max="120" step="1" value="30"></div>
       <div class="row" style="margin-top:14px"><span class="lbl">Show artist line</span><input type="checkbox" class="toggle" id="showArtist" checked></div>
       <details class="disclosure"><summary>Fade timing</summary>
         <div class="grid2" style="margin-top:12px">
@@ -208,6 +203,7 @@ input[type="range"]{ width:100%; accent-color:var(--accent); }
           <div class="field"><label>Fade out <span class="val" id="outVal">600ms</span></label><input type="range" id="fadeOut" min="200" max="2000" step="50" value="600"></div>
         </div>
       </details>
+      <p class="subtle" style="text-align:left;margin-top:12px">Resize the box by scaling the browser source in OBS.</p>
     </section>
     <div class="previewSlot"></div>
   </section>
@@ -241,7 +237,7 @@ input[type="range"]{ width:100%; accent-color:var(--accent); }
       <h2>Preview <span class="side">live box</span></h2>
       <div class="stage">
         <div class="checker"></div>
-        <div class="box" id="box" data-corner="bl">
+        <div class="box" id="box">
           <div class="bi" id="bIcon">Y</div>
           <div><div class="bp" id="bPrimary">Baldur's Gate 3 Goes Too Far</div><div class="bs" id="bSecondary"></div></div>
         </div>
@@ -336,7 +332,7 @@ function persist(){
 function registryString(){ return REGISTRY.filter(s=>config.sites[s.key]&&config.sites[s.key].enabled).map(s=>[s.key,s.label,s.suffix,s.mode,(config.sites[s.key].accent||s.color)].join(US)).join(RS); }
 function writeRaw(){ $("#configOut").textContent=JSON.stringify({ ...config, registry:REGISTRY },null,2); }
 
-function overlayUrl(){ const p=new URLSearchParams({ host:conn.host, port:conn.port, accent:config.accent.replace("#",""), theme:config.theme, corner:config.behavior.corner, in:config.behavior.fadeInMs, out:config.behavior.fadeOutMs, hold:config.behavior.onScreenSeconds, artist:config.behavior.showArtist?1:0 }); return OVERLAY_BASE+"?"+p.toString(); }
+function overlayUrl(){ const p=new URLSearchParams({ host:conn.host, port:conn.port, accent:config.accent.replace("#",""), theme:config.theme, in:config.behavior.fadeInMs, out:config.behavior.fadeOutMs, hold:config.behavior.onScreenSeconds, artist:config.behavior.showArtist?1:0 }); return OVERLAY_BASE+"?"+p.toString(); }
 $("#overlayBtn").onclick=()=>navigator.clipboard.writeText(overlayUrl()).then(()=>toast("Overlay URL copied"));
 $("#copyCfg").onclick=()=>navigator.clipboard.writeText(JSON.stringify({ ...config, registry:REGISTRY })).then(()=>toast("Config copied"));
 
@@ -397,7 +393,6 @@ $("#addBtn").onclick=()=>{
 $("#duration").addEventListener("input",e=>{ config.behavior.onScreenSeconds=+e.target.value; $("#durVal").textContent=e.target.value+"s"; persist(); });
 $("#fadeIn").addEventListener("input",e=>{ config.behavior.fadeInMs=+e.target.value; $("#inVal").textContent=e.target.value+"ms"; persist(); });
 $("#fadeOut").addEventListener("input",e=>{ config.behavior.fadeOutMs=+e.target.value; $("#outVal").textContent=e.target.value+"ms"; persist(); });
-$("#corner").addEventListener("change",e=>{ config.behavior.corner=e.target.value; $("#box").dataset.corner=e.target.value; enter(); persist(); });
 $("#showArtist").addEventListener("change",e=>{ config.behavior.showArtist=e.target.checked; renderPreview(lastSample); persist(); });
 
 /* ===== preview ===== */
@@ -412,10 +407,9 @@ function renderPreview(s){
   $("#bSecondary").textContent = show ? s.secondary : "";
   $("#bSecondary").style.display = show ? "" : "none";
 }
-const sideOff=()=>(config.behavior.corner==="bl"||config.behavior.corner==="tl")?"translateX(calc(-100% - 28px))":"translateX(calc(100% + 28px))";
 let leaveTimer;
-function enter(){ const b=$("#box"); if(!b) return; const off=sideOff(); clearTimeout(leaveTimer); b.style.transition="none"; b.style.opacity="0"; b.style.transform=off; void b.offsetWidth; const i=config.behavior.fadeInMs; b.style.transition=`transform ${i}ms var(--ease),opacity ${i}ms var(--ease)`; b.style.opacity="1"; b.style.transform="translateX(0)"; }
-function leave(){ const b=$("#box"); if(!b) return; const o=config.behavior.fadeOutMs; b.style.transition=`transform ${o}ms var(--ease),opacity ${o}ms var(--ease)`; b.style.opacity="0"; b.style.transform=sideOff(); }
+function enter(){ const b=$("#box"); if(!b) return; clearTimeout(leaveTimer); b.style.transition="none"; b.style.opacity="0"; b.style.transform="translateY(16px)"; void b.offsetWidth; const i=config.behavior.fadeInMs; b.style.transition=`transform ${i}ms var(--ease),opacity ${i}ms var(--ease)`; b.style.opacity="1"; b.style.transform="translateY(0)"; }
+function leave(){ const b=$("#box"); if(!b) return; const o=config.behavior.fadeOutMs; b.style.transition=`transform ${o}ms var(--ease),opacity ${o}ms var(--ease)`; b.style.opacity="0"; b.style.transform="translateY(-10px)"; }
 function pop(){ enter(); clearTimeout(leaveTimer); leaveTimer=setTimeout(leave, config.behavior.fadeInMs+config.behavior.onScreenSeconds*1000); }
 $("#testBtn").onclick=pop; $("#exitBtn").onclick=leave;
 $("#reshowBtn").onclick=()=>{ SB.doAction("Window Watcher Action",{ mode:"reshow" }); toast("Reshow sent"); };
@@ -428,7 +422,6 @@ function applyAll(){
   document.documentElement.style.setProperty("--accent",config.accent);
   $("#hexInput").value=config.accent; $("#hexDot").style.background=config.accent;
   document.querySelectorAll(".swatch").forEach(el=>el.setAttribute("aria-pressed", el.dataset.hex.toUpperCase()===config.accent.toUpperCase()));
-  $("#corner").value=config.behavior.corner; $("#box").dataset.corner=config.behavior.corner;
   $("#duration").value=config.behavior.onScreenSeconds; $("#durVal").textContent=config.behavior.onScreenSeconds+"s";
   $("#fadeIn").value=config.behavior.fadeInMs; $("#inVal").textContent=config.behavior.fadeInMs+"ms";
   $("#fadeOut").value=config.behavior.fadeOutMs; $("#outVal").textContent=config.behavior.fadeOutMs+"ms";
