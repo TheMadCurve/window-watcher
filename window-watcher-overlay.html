@@ -21,8 +21,8 @@
 * { box-sizing:border-box; }
 html, body { margin:0; height:100%; width:100%; background:transparent; overflow:hidden; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
 
-/* scaler is pinned to the lower-left of the source and scaled by JS */
-#scaler { position:fixed; left:3%; bottom:4%; transform-origin:left bottom; will-change:transform; }
+/* scaler is centered in the source and scaled by JS */
+#scaler { position:fixed; left:50%; top:50%; transform-origin:center center; will-change:transform; }
 
 #box {
   display:inline-flex; align-items:center; gap:11px;
@@ -86,15 +86,15 @@ function dbg(m){ if(DEBUG) document.getElementById("dbg").textContent = m; }
 const DESIGN_H = 60;          // reference box height (px) at scale 1
 const TARGET_FRAC = 0.55;     // box ≈ 55% of source height
 function fit(){
-  scaler.style.transform = "scale(1)";
+  scaler.style.transform = "translate(-50%, -50%) scale(1)";
   box.style.maxWidth = "none";
   const vw = window.innerWidth, vh = window.innerHeight;
   let scale = (vh * TARGET_FRAC * SIZE) / DESIGN_H;
   scale = Math.max(0.1, scale);
-  // clamp so the scaled box fits the source width (leaves the left/right margin)
+  // clamp so the scaled box fits the source width (leaves a small margin)
   const availW = vw * 0.94;
   box.style.maxWidth = (availW / scale) + "px";
-  scaler.style.transform = "scale(" + scale + ")";
+  scaler.style.transform = "translate(-50%, -50%) scale(" + scale + ")";
 }
 window.addEventListener("resize", fit);
 
