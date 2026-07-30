@@ -7,21 +7,13 @@
 <style>
 /* ============================================================
    Window Watcher — OBS overlay (browser source)
-   Dependency-free. Appearance from URL params; title data over
-   the Streamer.bot WebSocket as General.Custom broadcasts.
-   Size the box by scaling the browser source in OBS.
+   Dependency-free. The widget scales to the browser source:
+   size it by setting the source's width/height in OBS.
 
-   Params:
-     host, port           Streamer.bot address (default 127.0.0.1:8080)
-     accent  hex w/o #     (default a855f7)
-     theme   dark | light  (default dark)
-     in      fade-in ms     (default 800)
-     out     fade-out ms    (default 600)
-     hold    on-screen sec  (default 30)
-     artist  1 | 0          (default 1)
-     debug   1              (status + self-test)
+   Params: host, port, accent (hex w/o #), theme (dark|light),
+           in, out (ms), hold (sec), artist (1|0),
+           size (0.3–3 fine multiplier, default 1), debug (1)
    ============================================================ */
-
 :root { --accent:#a855f7; }
 [data-theme="dark"]  { --box-bg:rgba(12,7,22,.82);  --text:#f2ecff; --muted:#b9addb; --border-mix:38%; }
 [data-theme="light"] { --box-bg:rgba(255,255,255,.9); --text:#1c1233; --muted:#5f5480; --border-mix:45%; }
@@ -29,11 +21,11 @@
 * { box-sizing:border-box; }
 html, body { margin:0; height:100%; width:100%; background:transparent; overflow:hidden; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
 
-/* anchored lower-left; the whole source is scaled/placed in OBS */
+/* scaler is pinned to the lower-left of the source and scaled by JS */
+#scaler { position:fixed; left:3%; bottom:4%; transform-origin:left bottom; will-change:transform; }
+
 #box {
-  position:fixed; left:14px; bottom:14px;
   display:inline-flex; align-items:center; gap:11px;
-  max-width:calc(100vw - 28px);
   padding:11px 16px 11px 12px;
   border-radius:13px;
   background:var(--box-bg);
@@ -52,9 +44,11 @@ body[data-debug="1"] #dbg { display:block; }
 </style>
 </head>
 <body>
-  <div id="box">
-    <div id="icon">•</div>
-    <div id="text"><span id="primary"></span><span id="secondary"></span></div>
+  <div id="scaler">
+    <div id="box">
+      <div id="icon">•</div>
+      <div id="text"><span id="primary"></span><span id="secondary"></span></div>
+    </div>
   </div>
   <div id="dbg">starting…</div>
 
@@ -70,12 +64,15 @@ const IN_MS  = clampNum(P.get("in"), 200, 4000, 800);
 const OUT_MS = clampNum(P.get("out"), 200, 4000, 600);
 const HOLD_S = clampNum(P.get("hold"), 1, 600, 30);
 const ARTIST = P.get("artist") !== "0";
+const SIZE   = clampFloat(P.get("size"), 0.3, 3, 1);
 const DEBUG  = P.get("debug") === "1";
 function clampNum(v, lo, hi, d){ const n = parseInt(v,10); return isNaN(n) ? d : Math.min(hi, Math.max(lo, n)); }
+function clampFloat(v, lo, hi, d){ const n = parseFloat(v); return isNaN(n) ? d : Math.min(hi, Math.max(lo, n)); }
 
 document.documentElement.style.setProperty("--accent", ACCENT);
 document.documentElement.dataset.theme = THEME;
 document.body.dataset.debug = DEBUG ? "1" : "0";
+const scaler = document.getElementById("scaler");
 const box = document.getElementById("box");
 const iconEl = document.getElementById("icon");
 const primaryEl = document.getElementById("primary");
@@ -83,21 +80,35 @@ const secondaryEl = document.getElementById("secondary");
 const EASE = "cubic-bezier(.22,.61,.36,1)";
 function dbg(m){ if(DEBUG) document.getElementById("dbg").textContent = m; }
 
-/* slide + fade UP on enter, fade up-and-out on leave */
+/* ---- scale the whole widget to the source size (Nutty-style) ----
+   Height-driven against a fixed design reference so the font stays
+   consistent between one- and two-line states; clamped to width. */
+const DESIGN_H = 60;          // reference box height (px) at scale 1
+const TARGET_FRAC = 0.55;     // box ≈ 55% of source height
+function fit(){
+  scaler.style.transform = "scale(1)";
+  box.style.maxWidth = "none";
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let scale = (vh * TARGET_FRAC * SIZE) / DESIGN_H;
+  scale = Math.max(0.1, scale);
+  // clamp so the scaled box fits the source width (leaves the left/right margin)
+  const availW = vw * 0.94;
+  box.style.maxWidth = (availW / scale) + "px";
+  scaler.style.transform = "scale(" + scale + ")";
+}
+window.addEventListener("resize", fit);
+
+/* ---- slide + fade up ---- */
 let leaveTimer;
 function enter(){
-  box.style.transition = "none";
-  box.style.opacity = "0";
-  box.style.transform = "translateY(16px)";
+  box.style.transition = "none"; box.style.opacity = "0"; box.style.transform = "translateY(16px)";
   void box.offsetWidth;
   box.style.transition = "transform "+IN_MS+"ms "+EASE+", opacity "+IN_MS+"ms "+EASE;
-  box.style.opacity = "1";
-  box.style.transform = "translateY(0)";
+  box.style.opacity = "1"; box.style.transform = "translateY(0)";
 }
 function leave(){
   box.style.transition = "transform "+OUT_MS+"ms "+EASE+", opacity "+OUT_MS+"ms "+EASE;
-  box.style.opacity = "0";
-  box.style.transform = "translateY(-10px)";
+  box.style.opacity = "0"; box.style.transform = "translateY(-10px)";
 }
 function pop(){ enter(); clearTimeout(leaveTimer); leaveTimer = setTimeout(leave, IN_MS + HOLD_S*1000); }
 
@@ -109,11 +120,12 @@ function show(d){
   const wantSec = d.state === "playing" && ARTIST && d.secondary;
   secondaryEl.textContent = wantSec ? d.secondary : "";
   secondaryEl.style.display = wantSec ? "" : "none";
+  fit();               // text width changed → refit before showing
   pop();
   dbg("shown: " + (d.primary || d.label || "?"));
 }
 
-/* Streamer.bot connection with reconnect backoff */
+/* ---- Streamer.bot connection with reconnect backoff ---- */
 let ws, backoff = 1000;
 async function sha(str){ const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)); return btoa(String.fromCharCode(...new Uint8Array(b))); }
 function send(o){ if(ws && ws.readyState===1){ o.id=o.id||("m"+Date.now()); ws.send(JSON.stringify(o)); } }
@@ -127,12 +139,13 @@ function connect(){
     let m; try { m = JSON.parse(ev.data); } catch { return; }
     if(m.authentication && m.authentication.salt){ const s = await sha(PASS + m.authentication.salt); send({ request:"Authenticate", authentication: await sha(s + m.authentication.challenge) }); return; }
     if((m.request==="Hello" && !m.authentication) || (m.status==="ok" && backoff!==1000)){ ready(); return; }
-    if(m.event && m.event.type==="Custom" && m.data && m.data.v){ show(m.data); }
+    if(m.event && m.event.type==="Custom" && m.data && m.data.v && m.data.type!=="windows"){ show(m.data); }
   };
 }
 function ready(){ backoff = 1000; send({ request:"Subscribe", events:{ General:["Custom"] } }); dbg("connected — waiting for titles"); }
 function retry(){ setTimeout(connect, backoff); backoff = Math.min(15000, backoff*2); }
 
+fit();
 connect();
 if(DEBUG) setTimeout(() => show({ v:1, site:"youtube", label:"YouTube", state:"browsing", primary:"Debug — overlay is rendering", secondary:null, color:"#ff4d4d" }), 600);
 </script>
