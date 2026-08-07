@@ -12,11 +12,9 @@ public class CPHInline
         " - Google Chrome",
         " - Microsoft\u200B Edge",
         " - Microsoft Edge",
+        " - Opera",
     };
 
-    // Separators that typically sit before a site name in a tab title.
-    // Note: the bullet ( \u2022 ) is intentionally excluded — it separates
-    // track and artist for media sites, not a site name.
     private static readonly string[] SiteSeps = { " - ", " | ", " \u2013 ", " \u00b7 " };
 
     private delegate bool EnumWindowsProc(IntPtr h, IntPtr l);
