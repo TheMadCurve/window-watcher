@@ -72,6 +72,9 @@
     <div class="subhead"><button class="back" data-back>‹ Back</button><h1>Behavior</h1></div>
     <section class="card">
       <div class="field"><label>On-screen time <span class="val" id="durVal">30s</span></label><input type="range" id="duration" min="5" max="120" step="1" value="30"></div>
+      <div class="row"><span class="lbl">Alignment</span>
+        <div class="seg" role="group" aria-label="Alignment"><button id="alLeft" aria-pressed="false">Left</button><button id="alCenter" aria-pressed="true">Center</button><button id="alRight" aria-pressed="false">Right</button></div>
+      </div>
       <div class="row"><span class="lbl">Show artist line</span><input type="checkbox" class="toggle" id="showArtist" checked></div>
       <details class="disclosure"><summary>Fade timing</summary>
         <div class="grid2">
