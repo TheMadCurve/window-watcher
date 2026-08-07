@@ -4,8 +4,8 @@
    size it by setting the source's width/height in OBS.
 
    Params: host, port, accent (hex w/o #), theme (dark|light),
-           in, out (ms), hold (sec), artist (1|0),
-           size (0.3–3 fine multiplier, default 1), debug (1)
+           align (left|center|right), in, out (ms), hold (sec),
+           artist (1|0), size (0.3–3 fine multiplier, default 1), debug (1)
    ============================================================ */
 :root { --accent:#a855f7; }
 [data-theme="dark"]  { --box-bg:rgba(12,7,22,.82);  --text:#f2ecff; --muted:#b9addb; --border-mix:38%; }
@@ -14,8 +14,11 @@
 * { box-sizing:border-box; }
 html, body { margin:0; height:100%; width:100%; background:transparent; overflow:hidden; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
 
-/* scaler is centered in the source and scaled by JS */
-#scaler { position:fixed; left:50%; top:50%; transform-origin:center center; will-change:transform; }
+/* scaler is placed in the source (alignment chosen in the dock) and scaled by JS */
+#scaler { position:fixed; top:50%; will-change:transform; }
+#scaler[data-align="center"] { left:50%; transform-origin:center center; }
+#scaler[data-align="left"]   { left:3%;  transform-origin:left center; }
+#scaler[data-align="right"]  { right:3%; transform-origin:right center; }
 
 #box {
   display:inline-flex; align-items:center; gap:11px;
