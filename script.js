@@ -12,7 +12,7 @@ const SAMPLES = {
   youtube:{ site:"youtube", state:"browsing", primary:"Baldur's Gate 3 Goes Too Far", secondary:"" },
   spotify:{ site:"spotify", state:"playing",  primary:"Prologue: One Ring to Rule Them All", secondary:"Howard Shore" },
 };
-const config = { theme:"dark", accent:"#A855F7", sites:{}, behavior:{ onScreenSeconds:30, corner:"bl", fadeInMs:800, fadeOutMs:600, showArtist:true } };
+const config = { theme:"dark", accent:"#A855F7", sites:{}, behavior:{ onScreenSeconds:30, align:"center", fadeInMs:800, fadeOutMs:600, showArtist:true } };
 const conn = { host:"127.0.0.1", port:"8080", pass:"" };
 REGISTRY.forEach(s => config.sites[s.key] = { enabled:true, accent:null });
 
@@ -80,7 +80,7 @@ function persist(){
 function registryString(){ return REGISTRY.filter(s=>config.sites[s.key]&&config.sites[s.key].enabled).map(s=>[s.key,s.label,s.suffix,s.mode,(config.sites[s.key].accent||s.color)].join(US)).join(RS); }
 function writeRaw(){ $("#configOut").textContent=JSON.stringify({ ...config, registry:REGISTRY },null,2); }
 
-function overlayUrl(){ const p=new URLSearchParams({ host:conn.host, port:conn.port, accent:config.accent.replace("#",""), theme:config.theme, in:config.behavior.fadeInMs, out:config.behavior.fadeOutMs, hold:config.behavior.onScreenSeconds, artist:config.behavior.showArtist?1:0 }); return OVERLAY_BASE+"?"+p.toString(); }
+function overlayUrl(){ const p=new URLSearchParams({ host:conn.host, port:conn.port, accent:config.accent.replace("#",""), theme:config.theme, align:config.behavior.align, in:config.behavior.fadeInMs, out:config.behavior.fadeOutMs, hold:config.behavior.onScreenSeconds, artist:config.behavior.showArtist?1:0 }); return OVERLAY_BASE+"?"+p.toString(); }
 $("#overlayBtn").onclick=()=>navigator.clipboard.writeText(overlayUrl()).then(()=>toast("Overlay URL copied"));
 $("#copyCfg").onclick=()=>navigator.clipboard.writeText(JSON.stringify({ ...config, registry:REGISTRY })).then(()=>toast("Config copied"));
 
@@ -158,6 +158,8 @@ $("#duration").addEventListener("input",e=>{ config.behavior.onScreenSeconds=+e.
 $("#fadeIn").addEventListener("input",e=>{ config.behavior.fadeInMs=+e.target.value; $("#inVal").textContent=e.target.value+"ms"; persist(); });
 $("#fadeOut").addEventListener("input",e=>{ config.behavior.fadeOutMs=+e.target.value; $("#outVal").textContent=e.target.value+"ms"; persist(); });
 $("#showArtist").addEventListener("change",e=>{ config.behavior.showArtist=e.target.checked; renderPreview(lastSample); persist(); });
+function setAlign(a){ config.behavior.align=a; ["Left","Center","Right"].forEach(x=>{ const el=$("#al"+x); if(el) el.setAttribute("aria-pressed", a===x.toLowerCase()); }); const b=$("#box"); if(b) b.dataset.align=a; enter(); persist(); }
+["Left","Center","Right"].forEach(x=>{ const el=$("#al"+x); if(el) el.onclick=()=>setAlign(x.toLowerCase()); });
 
 /* ===== preview ===== */
 let lastSample=SAMPLES.youtube;
@@ -172,8 +174,8 @@ function renderPreview(s){
   $("#bSecondary").style.display = show ? "" : "none";
 }
 let leaveTimer;
-function enter(){ const b=$("#box"); if(!b) return; clearTimeout(leaveTimer); b.style.transition="none"; b.style.opacity="0"; b.style.transform="translateY(16px)"; void b.offsetWidth; const i=config.behavior.fadeInMs; b.style.transition=`transform ${i}ms var(--ease),opacity ${i}ms var(--ease)`; b.style.opacity="1"; b.style.transform="translateY(0)"; }
-function leave(){ const b=$("#box"); if(!b) return; const o=config.behavior.fadeOutMs; b.style.transition=`transform ${o}ms var(--ease),opacity ${o}ms var(--ease)`; b.style.opacity="0"; b.style.transform="translateY(-10px)"; }
+function enter(){ const b=$("#box"); if(!b) return; clearTimeout(leaveTimer); const base=config.behavior.align==="center"?"translateX(-50%) ":""; b.style.transition="none"; b.style.opacity="0"; b.style.transform=base+"translateY(16px)"; void b.offsetWidth; const i=config.behavior.fadeInMs; b.style.transition=`transform ${i}ms var(--ease),opacity ${i}ms var(--ease)`; b.style.opacity="1"; b.style.transform=base+"translateY(0)"; }
+function leave(){ const b=$("#box"); if(!b) return; const base=config.behavior.align==="center"?"translateX(-50%) ":""; const o=config.behavior.fadeOutMs; b.style.transition=`transform ${o}ms var(--ease),opacity ${o}ms var(--ease)`; b.style.opacity="0"; b.style.transform=base+"translateY(-10px)"; }
 function pop(){ enter(); clearTimeout(leaveTimer); leaveTimer=setTimeout(leave, config.behavior.fadeInMs+config.behavior.onScreenSeconds*1000); }
 $("#testBtn").onclick=pop; $("#exitBtn").onclick=leave;
 $("#reshowBtn").onclick=()=>{ SB.doAction("Window Watcher Action",{ mode:"reshow" }); toast("Reshow sent"); };
@@ -190,6 +192,8 @@ function applyAll(){
   $("#fadeIn").value=config.behavior.fadeInMs; $("#inVal").textContent=config.behavior.fadeInMs+"ms";
   $("#fadeOut").value=config.behavior.fadeOutMs; $("#outVal").textContent=config.behavior.fadeOutMs+"ms";
   $("#showArtist").checked=config.behavior.showArtist;
+  ["Left","Center","Right"].forEach(x=>{ const el=$("#al"+x); if(el) el.setAttribute("aria-pressed", config.behavior.align===x.toLowerCase()); });
+  { const b=$("#box"); if(b) b.dataset.align=config.behavior.align; }
   $("#sbHost").value=conn.host; $("#sbPort").value=conn.port; $("#sbPass").value=conn.pass;
   renderSites(); renderPreview(SAMPLES.youtube); writeRaw();
 }
