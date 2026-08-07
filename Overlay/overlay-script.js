@@ -10,6 +10,7 @@ const OUT_MS = clampNum(P.get("out"), 200, 4000, 600);
 const HOLD_S = clampNum(P.get("hold"), 1, 600, 30);
 const ARTIST = P.get("artist") !== "0";
 const SIZE   = clampFloat(P.get("size"), 0.3, 3, 1);
+const ALIGN  = ["left","center","right"].includes(P.get("align")) ? P.get("align") : "center";
 const DEBUG  = P.get("debug") === "1";
 function clampNum(v, lo, hi, d){ const n = parseInt(v,10); return isNaN(n) ? d : Math.min(hi, Math.max(lo, n)); }
 function clampFloat(v, lo, hi, d){ const n = parseFloat(v); return isNaN(n) ? d : Math.min(hi, Math.max(lo, n)); }
@@ -18,6 +19,7 @@ document.documentElement.style.setProperty("--accent", ACCENT);
 document.documentElement.dataset.theme = THEME;
 document.body.dataset.debug = DEBUG ? "1" : "0";
 const scaler = document.getElementById("scaler");
+scaler.dataset.align = ALIGN;
 const box = document.getElementById("box");
 const iconEl = document.getElementById("icon");
 const primaryEl = document.getElementById("primary");
@@ -31,7 +33,8 @@ function dbg(m){ if(DEBUG) document.getElementById("dbg").textContent = m; }
 const DESIGN_H = 60;          // reference box height (px) at scale 1
 const TARGET_FRAC = 0.55;     // box ≈ 55% of source height
 function fit(){
-  scaler.style.transform = "translate(-50%, -50%) scale(1)";
+  const tx = ALIGN === "center" ? "-50%" : "0";
+  scaler.style.transform = "translate(" + tx + ", -50%) scale(1)";
   box.style.maxWidth = "none";
   const vw = window.innerWidth, vh = window.innerHeight;
   let scale = (vh * TARGET_FRAC * SIZE) / DESIGN_H;
@@ -39,7 +42,7 @@ function fit(){
   // clamp so the scaled box fits the source width (leaves a small margin)
   const availW = vw * 0.94;
   box.style.maxWidth = (availW / scale) + "px";
-  scaler.style.transform = "translate(-50%, -50%) scale(" + scale + ")";
+  scaler.style.transform = "translate(" + tx + ", -50%) scale(" + scale + ")";
 }
 window.addEventListener("resize", fit);
 
