@@ -6,13 +6,13 @@ let REGISTRY = [
 ];
 const ACCENT_PRESETS = ["#a855f7","#e879a6","#22d3ee","#f5b544","#4ade80","#fb7185"];
 const OVERLAY_BASE = "https://widgets.themadcurve.cc/window-watcher/Overlay/window-watcher-overlay.html";
-const GUIDE_URL = "https://themadcurve.cc"; /* point at your Notion setup guide */
+const GUIDE_URL = "https://themadcurve.notion.site/Window-Watcher-3b947d7b963780dcb2dbd20a4332dcca"; /* point at your Notion setup guide */
 
 const SAMPLES = {
-  youtube:{ site:"youtube", state:"browsing", primary:"Baldur's Gate 3 Goes Too Far", secondary:"" },
-  spotify:{ site:"spotify", state:"playing",  primary:"Prologue: One Ring to Rule Them All", secondary:"Howard Shore" },
+  youtube:{ site:"youtube", state:"browsing", primary:"This is a YouTube Pop-Up", secondary:"" },
+  spotify:{ site:"spotify", state:"playing",  primary:"This is a Spotify Pop-Up", secondary:"Artist Here" },
 };
-const config = { theme:"dark", accent:"#A855F7", sites:{}, behavior:{ onScreenSeconds:30, align:"center", fadeInMs:800, fadeOutMs:600, showArtist:true } };
+const config = { theme:"dark", accent:"#A855F7", sites:{}, behavior:{ onScreenSeconds:20, align:"center", fadeInMs:800, fadeOutMs:600, showArtist:true } };
 const conn = { host:"127.0.0.1", port:"8080", pass:"" };
 REGISTRY.forEach(s => config.sites[s.key] = { enabled:true, accent:null });
 
