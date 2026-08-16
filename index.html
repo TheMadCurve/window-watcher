@@ -57,10 +57,24 @@
     <div class="subtle" id="saveState"></div>
   </section>
 
+  <!-- APPEARANCE -->
+  <section class="view" id="view-appearance" hidden>
+    <div class="subhead"><button class="back" data-back>‹ Back</button><h1>Appearance</h1></div>
+    
+    <div class="previewSlot"></div>
+  </section>
+
   <!-- BEHAVIOR -->
   <section class="view" id="view-behavior" hidden>
     <div class="subhead"><button class="back" data-back>‹ Back</button><h1>Behavior</h1></div>
     <section class="card">
+      <section class="card">
+        <div class="row"><span class="lbl">Theme</span>
+          <div class="seg" role="group" aria-label="Theme"><button id="thDark" aria-pressed="true">Dark</button><button id="thLight" aria-pressed="false">Light</button></div>
+        </div>
+        <div class="swatches" id="swatches"></div>
+        <div class="hexrow"><div class="hexdot" id="hexDot"></div><input class="inp mono" id="hexInput" value="#A855F7" maxlength="7" aria-label="Custom accent"><span class="note">custom hex</span></div>
+      </section>
       <div class="field"><label>On-screen time <span class="val" id="durVal">30s</span></label><input type="range" id="duration" min="5" max="120" step="1" value="30"></div>
       <div class="row"><span class="lbl">Alignment</span>
         <div class="seg" role="group" aria-label="Alignment"><button id="alLeft" aria-pressed="false">Left</button><button id="alCenter" aria-pressed="true">Center</button><button id="alRight" aria-pressed="false">Right</button></div>
