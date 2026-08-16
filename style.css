@@ -66,17 +66,10 @@ header{
   margin-bottom:.9rem;
 }
 
-.brand{
-  font-family:var(--font-display);
-  font-weight:700;
-  font-size:1.25rem;
-  letter-spacing:-.02em;
-}
-
-.brand em{
-  font-style:normal;
-  color:var(--accent);
-}
+.brand{ display:flex; align-items:center; }
+.brand img{ height:1.7rem; width:auto; display:block; }
+html[data-theme="dark"] .brand .logo-light{ display:none; }
+html[data-theme="light"] .brand .logo-dark{ display:none; }
 
 .hgroup{
   display:flex;
