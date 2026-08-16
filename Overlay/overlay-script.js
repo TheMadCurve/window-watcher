@@ -21,7 +21,6 @@ document.body.dataset.debug = DEBUG ? "1" : "0";
 const scaler = document.getElementById("scaler");
 scaler.dataset.align = ALIGN;
 const box = document.getElementById("box");
-const iconEl = document.getElementById("icon");
 const primaryEl = document.getElementById("primary");
 const secondaryEl = document.getElementById("secondary");
 const EASE = "cubic-bezier(.22,.61,.36,1)";
@@ -30,7 +29,7 @@ function dbg(m){ if(DEBUG) document.getElementById("dbg").textContent = m; }
 /* ---- scale the whole widget to the source size (Nutty-style) ----
    Height-driven against a fixed design reference so the font stays
    consistent between one- and two-line states; clamped to width. */
-const DESIGN_H = 60;          // reference box height (px) at scale 1
+const DESIGN_H = 50;          // reference box height (px) at scale 1
 const TARGET_FRAC = 0.55;     // box ≈ 55% of source height
 function fit(){
   const tx = ALIGN === "center" ? "-50%" : "0";
@@ -61,9 +60,6 @@ function leave(){
 function pop(){ enter(); clearTimeout(leaveTimer); leaveTimer = setTimeout(leave, IN_MS + HOLD_S*1000); }
 
 function show(d){
-  iconEl.style.background = (d.color && d.color !== "") ? d.color : ACCENT;
-  const label = d.label || d.site || "";
-  iconEl.textContent = (label[0] || "•").toUpperCase();
   primaryEl.textContent = d.primary || d.label || "";
   const wantSec = d.state === "playing" && ARTIST && d.secondary;
   secondaryEl.textContent = wantSec ? d.secondary : "";
