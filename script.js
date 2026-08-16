@@ -59,7 +59,7 @@ const SB = {
       let m; try{ m=JSON.parse(ev.data); }catch{ return; }
       if(m.authentication && m.authentication.salt){ const secret=await this.sha(conn.pass+m.authentication.salt); this.send({ request:"Authenticate", authentication:await this.sha(secret+m.authentication.challenge) }); return; }
       if((m.request==="Hello" && !m.authentication) || (m.status==="ok" && !this.connected)){ this.ready(); return; }
-      if(m.event && m.event.type==="Custom" && m.data && m.data.v){ if(m.data.type==="windows") handleWindows(m.data.list||[]); else applyLive(m.data); }
+      if(m.event && m.event.type==="Custom" && m.data && m.data.v){ applyLive(m.data); }
     };
   },
   ready(){ this.connected=true; this.backoff=1000; setStatus(true); this.send({ request:"Subscribe", events:{ General:["Custom"] } }); },
@@ -125,21 +125,7 @@ function renderSites(){
     list.appendChild(row);
   });
 }
-$("#pickBtn").onclick=()=>{
-  if(!SB.connected){ toast("Connect to Streamer.bot first"); return; }
-  const wl=$("#winList"); wl.hidden=false; wl.innerHTML='<div class="empty">Looking for open browser windows…</div>';
-  SB.doAction("Get Windows",{});
-};
-function deriveName(suffix){ return (suffix||"").replace(/^[\s\-|\u2013\u00b7]+/,"").trim(); }
-function handleWindows(list){
-  const wl=$("#winList"); wl.hidden=false; wl.innerHTML="";
-  if(!list.length){ wl.innerHTML='<div class="empty">No browser windows found. Open the site in its own window, then try again.</div>'; return; }
-  list.forEach(w=>{
-    const b=document.createElement("button"); b.textContent=w.page; b.title=w.page;
-    b.onclick=()=>{ $("#asSuffix").value=w.suffix||""; if(w.suffix && !$("#asName").value.trim()) $("#asName").value=deriveName(w.suffix); wl.hidden=true; };
-    wl.appendChild(b);
-  });
-}
+
 $("#addBtn").onclick=()=>{
   const name=$("#asName").value.trim(), suffix=$("#asSuffix").value;
   if(!name){ toast("Give the site a name"); return; }
