@@ -22,7 +22,7 @@ html, body { margin:0; height:100%; width:100%; background:transparent; overflow
 
 #box {
   display:inline-flex; align-items:center; gap:11px;
-  padding:11px 18px;
+  padding:6px 9px;
   border-radius:13px;
   border:1px solid var(--accent);
   box-shadow:0 0 22px color-mix(in srgb, var(--accent) 45%, transparent), 0 8px 26px rgba(0,0,0,.35);
