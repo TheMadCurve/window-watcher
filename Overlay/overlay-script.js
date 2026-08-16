@@ -60,6 +60,7 @@ function leave(){
 function pop(){ enter(); clearTimeout(leaveTimer); leaveTimer = setTimeout(leave, IN_MS + HOLD_S*1000); }
 
 function show(d){
+   box.style.setProperty("--accent", (d.color && d.color !== "") ? d.color : ACCENT);
   primaryEl.textContent = d.primary || d.label || "";
   const wantSec = d.state === "playing" && ARTIST && d.secondary;
   secondaryEl.textContent = wantSec ? d.secondary : "";
