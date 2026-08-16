@@ -20,10 +20,10 @@ html, body { margin:0; height:100%; width:100%; background:transparent; overflow
   color:var(--text); opacity:0; white-space:nowrap; will-change:transform,opacity;
 }
 [data-theme="dark"] #box {
-  background:radial-gradient(circle at center, hsla(from var(--accent) h s 8% / 0.95), hsla(from var(--accent) h s 3% / 0.75));
+  background:radial-gradient(circle at center, hsla(from var(--accent) h s 8% / 0.98), hsla(from var(--accent) h s 3% / 0.80));
 }
 [data-theme="light"] #box {
-  background:radial-gradient(circle at center, hsla(from var(--accent) h s 92% / 0.95), hsla(from var(--accent) h s 97% / 0.75));
+  background:radial-gradient(circle at center, hsla(from var(--accent) h s 92% / 0.98), hsla(from var(--accent) h s 97% / 0.80));
 }
 
 #text { display:flex; flex-direction:column; line-height:1.25; min-width:0; }
