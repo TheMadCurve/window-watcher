@@ -8,8 +8,8 @@
            artist (1|0), size (0.3–3 fine multiplier, default 1), debug (1)
    ============================================================ */
 :root { --accent:#a855f7; }
-[data-theme="dark"]  { --box-bg:rgba(12,7,22,.82);  --text:#f2ecff; --muted:#b9addb; --border-mix:38%; }
-[data-theme="light"] { --box-bg:rgba(255,255,255,.9); --text:#1c1233; --muted:#5f5480; --border-mix:45%; }
+[data-theme="dark"]  { --text:#f2ecff; --muted:#b9addb; }
+[data-theme="light"] { --text:#1c1233; --muted:#5f5480; }
 
 * { box-sizing:border-box; }
 html, body { margin:0; height:100%; width:100%; background:transparent; overflow:hidden; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
@@ -22,15 +22,19 @@ html, body { margin:0; height:100%; width:100%; background:transparent; overflow
 
 #box {
   display:inline-flex; align-items:center; gap:11px;
-  padding:11px 16px 11px 12px;
+  padding:11px 18px;
   border-radius:13px;
-  background:var(--box-bg);
-  border:1px solid color-mix(in srgb, var(--accent) var(--border-mix), transparent);
-  box-shadow:0 8px 26px color-mix(in srgb, var(--accent) 26%, transparent);
-  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  border:1px solid var(--accent);
+  box-shadow:0 0 22px color-mix(in srgb, var(--accent) 45%, transparent), 0 8px 26px rgba(0,0,0,.35);
   color:var(--text); opacity:0; white-space:nowrap; will-change:transform,opacity;
 }
-#icon { width:36px; height:36px; border-radius:9px; display:grid; place-items:center; font-weight:700; font-size:16px; color:#fff; background:var(--accent); flex-shrink:0; }
+[data-theme="dark"] #box {
+  background:radial-gradient(circle at center, hsl(from var(--accent) h s 8%), hsl(from var(--accent) h s 3%));
+}
+[data-theme="light"] #box {
+  background:radial-gradient(circle at center, hsl(from var(--accent) h s 92%), hsl(from var(--accent) h s 97%));
+}
+
 #text { display:flex; flex-direction:column; line-height:1.25; min-width:0; }
 #primary { font-weight:600; font-size:15px; letter-spacing:-.005em; overflow:hidden; text-overflow:ellipsis; }
 #secondary { font-size:12px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; }
