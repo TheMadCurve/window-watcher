@@ -60,22 +60,17 @@ body{
 /* header */
 header{
   display:flex;
-  align-items:center;
-  justify-content:space-between;
-  height:2.6rem;
-  margin-bottom:.9rem;
+  flex-direction:column;
+  gap:.6rem;
+  margin-bottom:1rem;
 }
 
-.brand{ display:flex; align-items:center; }
-.brand img{ height:1.7rem; width:auto; display:block; }
+.brand img{ width:100%; max-width:24rem; height:auto; display:block; }
 html[data-theme="dark"] .brand .logo-light{ display:none; }
 html[data-theme="light"] .brand .logo-dark{ display:none; }
 
-.hgroup{
-  display:flex;
-  align-items:center;
-  gap:.7rem;
-}
+.headbar{ display:flex; align-items:center; justify-content:space-between; gap:.7rem; }
+.headbar .right{ display:flex; align-items:center; gap:.7rem; }
 
 #statusIcon{
   width:.95rem;
