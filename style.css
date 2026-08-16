@@ -65,7 +65,7 @@ header{
   margin-bottom:1rem;
 }
 
-.brand img{ width:100%; max-width:24rem; height:auto; display:block; margin:auto; }
+.brand img{ width:60%; max-width:24rem; height:auto; display:block; margin:auto; }
 html[data-theme="dark"] .brand .logo-light{ display:none; }
 html[data-theme="light"] .brand .logo-dark{ display:none; }
 
