@@ -27,24 +27,6 @@ function loadLocal(){ try{ return JSON.parse(localStorage.getItem(STORE)); }catc
 let toastTimer;
 function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),1600); }
 
-/* ===== status icon (custom SVGs with dot fallback) ===== */
-function fallbackIcon(img){
-  const color = img.dataset.state === "connected" ? "#3fd17a" : "#7a7093";
-  img.onerror=null;
-  img.src = "data:image/svg+xml;utf8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"><circle cx="6" cy="6" r="5" fill="'+color+'"/></svg>');
-}
-function setStatus(connected){
-  const img=$("#statusIcon");
-  img.dataset.state=connected?"connected":"disconnected";
-  img.onerror=function(){ fallbackIcon(img); };
-  img.src=connected?"./connected.svg":"./disconnected.svg";
-  img.alt=img.title=connected?"Connected":"Disconnected";
-  const img2=$("#statusIcon2"); if(img2){ img2.dataset.state=img.dataset.state; img2.onerror=function(){ fallbackIcon(img2); }; img2.src=img.src; }
-  const ct=$("#connText"); if(ct) ct.textContent=connected?"Connected":"Disconnected";
-  $("#offline").dataset.show=connected?"0":"1";
-  $("#reshowBtn").disabled=!connected;
-}
-
 /* ===== Streamer.bot (auto-connect + reconnect) ===== */
 const SB = {
   ws:null, connected:false, backoff:1000, wantOpen:false,
