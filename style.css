@@ -41,7 +41,11 @@ html{
   font-size: clamp(11px, 3vw, 18px);
 }
 
-*{ box-sizing:border-box; }
+*{
+  box-sizing:border-box;
+  margin: 0;
+ }
+
 body{
   margin:0;
   background:var(--bg);
@@ -71,12 +75,6 @@ html[data-theme="light"] .brand .logo-dark{ display:none; }
 
 .headbar{ display:flex; align-items:center; justify-content:space-between; gap:.7rem; }
 .headbar .right{ display:flex; align-items:center; gap:.7rem; }
-
-#statusIcon{
-  width:.95rem;
-  height:.95rem;
-  display:block;
-}
 
 .iconbtn{
   appearance:none;
