@@ -28,6 +28,12 @@ let toastTimer;
 function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),1600); }
 
 /* ===== Streamer.bot (auto-connect + reconnect) ===== */
+function setStatus(connected){
+  const ct=$("#connText"); if(ct) ct.textContent=connected?"Connected":"Disconnected";
+  $("#offline").dataset.show=connected?"0":"1";  $("#offline").dataset.show=connected?"0":"1";
+  $("#reshowBtn").disabled=!connected;
+}
+
 const SB = {
   ws:null, connected:false, backoff:1000, wantOpen:false,
   async sha(str){ const b=await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)); return btoa(String.fromCharCode(...new Uint8Array(b))); },
