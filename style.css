@@ -155,7 +155,7 @@ html[data-theme="light"] .brand .logo-dark{ display:none; }
 
 /* cards — even vertical rhythm via flex gap */
 .card{ background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--r-lg); padding:var(--pad); margin-bottom:var(--gap); display:flex; flex-direction:column; gap:var(--stack); }
-.card h2{ margin:0; font-family:var(--font-display); font-weight:600; font-size:.95rem; display:flex; align-items:center; justify-content:space-between; }
+.card h2{ margin:0; font-family:var(--font-display); display:flex; align-items:center; justify-content:space-between; }
 .card h2 .side{ font-family:var(--font-mono); font-size:.62rem; color:var(--faint); font-weight:400; letter-spacing:.1em; text-transform:uppercase; }
 
 /* aligned label/control row */
