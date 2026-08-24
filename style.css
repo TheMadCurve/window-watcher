@@ -13,27 +13,27 @@
   --ctl:2.4rem;       /* control height */
 }
 html[data-theme="dark"]{
-  --bg:#0c0716;
-  --bg-deep:#080411;
-  --surface:#150d28;
-  --raised:#1d1440;
-  --border:#2c2150;
-  --border-soft:#221944;
-  --text:#f2ecff;
-  --muted:#9a8cc0;
-  --faint:#6b5f8e;
+  --bg:#070312;
+  --bg-deep:#040109;
+  --surface:#0b041a;
+  --raised:#13072c;
+  --border:#1e0b47;
+  --border-soft:#220c4f;
+  --text:#f5f5f5;
+  --muted:#a6a6a6;
+  --faint:#757575;
 }
 
 html[data-theme="light"]{
-  --bg:#f4f1fb;
-  --bg-deep:#ebe6f7;
+  --bg:#f9f7fd;
+  --bg-deep:#f3effb;
   --surface:#fff;
-  --raised:#faf8ff;
-  --border:#ddd5f0;
-  --border-soft:#e8e2f6;
-  --text:#1c1233;
-  --muted:#5f5480;
-  --faint:#9a90b8;
+  --raised:#ffffff;
+  --border:#e6dff6;
+  --border-soft:#e9e2f8;
+  --text:#242424;
+  --muted:#6b6b6b;
+  --faint:#a3a3a3;
 }
 
 /* the whole UI scales with the dock width */
