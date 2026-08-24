@@ -1,8 +1,8 @@
 :root{
   --accent:#a855f7;
-  --font-display:"Bricolage Grotesque",system-ui,sans-serif;
-  --font-body:"Instrument Sans",system-ui,sans-serif;
-  --font-mono:"Space Mono",ui-monospace,monospace;
+  --font-display:"Montserrat",system-ui,sans-serif;
+  --font-body:"Bitcount Grid Single",ui-monospace,monospace;
+  --font-mono:"VT323",ui-monospace,monospace;
   --ease:cubic-bezier(.22,.61,.36,1);
   --ok:#3fd17a; --warn:#f5b544;
 
